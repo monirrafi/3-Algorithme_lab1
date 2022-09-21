@@ -54,7 +54,14 @@ public class BiblioTab extends Bibliotheque{
 
     @Override
     public void Suprimer(int cote) {
+<<<<<<< HEAD
         
+=======
+        while(!Rechercher(cote)){
+            JOptionPane.showMessageDialog(null, "Le numero de l'ouvrage n'existe pas");
+        }
+        JOptionPane.showMessageDialog(null, "Le numero est " + cote);
+>>>>>>> parent of 0c5bf91 (21/09/2022_15h00)
 
     }
 
