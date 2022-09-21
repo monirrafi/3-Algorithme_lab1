@@ -1,0 +1,5 @@
+L;1;02/12/1923;Vector Hugo;Les misirables;chosepresse
+P;2;02/12/1923;Tournage;12354;5
+L;3;22/02/1963;Vector Hugo;Les misirables;chosepresse
+C;4;02/08/1993;Wall;Pink Floyd
+C;5;23/03/1972;Love;Bob Marley

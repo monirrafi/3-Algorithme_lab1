@@ -1,8 +1,8 @@
 public class Livre extends Ouvrage{
     private String auteur, titre, editeur ;
 
-    public Livre(String date, int cote, String auteur, String titre, String editeur) {
-        super(date, cote);
+    public Livre(int cote,String date,  String auteur, String titre, String editeur) {
+        super(cote,date);
         this.auteur = auteur;
         this.titre = titre;
         this.editeur = editeur;
@@ -35,5 +35,10 @@ public class Livre extends Ouvrage{
         this.editeur = editeur;
     }
     
-    
+    @Override
+    public String toString() {
+
+        return  super.toString() +  "\t" + super.envollopeMot(auteur,15) + "\t" + super.envollopeMot(titre,15) + "\t" +super.envollopeMot(editeur,15) + "\n";
+    }
+
 }
