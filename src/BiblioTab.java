@@ -54,14 +54,27 @@ public class BiblioTab extends Bibliotheque{
 
     @Override
     public void Suprimer(int cote) {
-        // TODO Auto-generated method stub
-        
+        while(!Rechercher(cote)){
+            JOptionPane.showMessageDialog(null, "Le numero de l'ouvrage n'existe pas");
+        }
+        JOptionPane.showMessageDialog(null, "Le numero est " + cote);
+
     }
 
     @Override
     public boolean Rechercher(int cote) {
-        // TODO Auto-generated method stub
-        return false;
+        boolean cond =false;
+        int taille = charger();
+        if(cote<=taille){
+            for(Ouvrage ouvrage:tabBiblio){
+                if(ouvrage.getCote()==cote){
+                    cond =true;
+                    break;
+                }
+
+            }
+        }
+        return cond;
     }
 
     @Override
