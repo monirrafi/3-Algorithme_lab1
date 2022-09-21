@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.Arrays;
 import javax.swing.*;
 
 
@@ -6,40 +7,52 @@ import javax.swing.*;
 public class BiblioTab extends Bibliotheque{
     final static int MAX =20;
     final static String fichier = "src\\Biblio.txt";
-    static Ouvrage[] tabBiblio = new Ouvrage[MAX];
+    
+    private Ouvrage[] tabBiblio = new Ouvrage[MAX];
     static BufferedReader tmpBiblio; 
-
-    public int charger() {
+    private int taille=0;
+    public BiblioTab() {
+        this.tabBiblio = charger();
+    }
+    public BiblioTab(Ouvrage[] tabBiblio) {
+        this.setTabBiblio(tabBiblio);
+    }
+    
+   
+    public Ouvrage[] charger() {
         int r=0;
         try {
             tmpBiblio = new BufferedReader(new FileReader(new File(fichier)));
-        String ligne = tmpBiblio.readLine();
-        String[] elt = new String[6];
-        int i=0;
-        while(i<MAX && ligne != null){
-            elt = ligne.split(";");
-            if(elt[0].equalsIgnoreCase("L") ){
-                tabBiblio[i]= new Livre(Integer.parseInt(elt[1]),elt[2],elt[3],elt[4],elt[5]);
+            String ligne = tmpBiblio.readLine();
+            String[] elt = new String[6];
+            int i=0;
+            while(i<MAX && ligne != null){
+                elt = ligne.split(";");
+                if(elt[0].equalsIgnoreCase("L") ){
+                    tabBiblio[i]= new Livre(Integer.parseInt(elt[1]),elt[2],elt[3],elt[4],elt[5]);
 
-            }else if(elt[0].equalsIgnoreCase("P") ){
-                tabBiblio[i]= new Periodique(Integer.parseInt(elt[1]),elt[2],elt[3],Integer.parseInt(elt[4]),
-                                             Integer.parseInt(elt[5]));
-                
-            }else if(elt[0].equalsIgnoreCase("C") ){
-                tabBiblio[i]= new CDisque(Integer.parseInt(elt[1]),elt[2],elt[3],elt[4]);
-                
+                }else if(elt[0].equalsIgnoreCase("P") ){
+                    tabBiblio[i]= new Periodique(Integer.parseInt(elt[1]),elt[2],elt[3],Integer.parseInt(elt[4]),
+                                                Integer.parseInt(elt[5]));
+                    
+                }else if(elt[0].equalsIgnoreCase("C") ){
+                    tabBiblio[i]= new CDisque(Integer.parseInt(elt[1]),elt[2],elt[3],elt[4]);
+                    
+                }
+                    ligne = tmpBiblio.readLine();
+                i++;
+                r=i;
             }
-                ligne = tmpBiblio.readLine();
-            i++;
-            r=i;
-        }
     } catch (IOException e) {
-        // TODO Auto-generated catch block
+        
         e.printStackTrace();
     }
-    return r;
+    
+    taille = r;
+    return tabBiblio;
 
     }
+    
     public void Lister(){
         JTextArea sortie = new JTextArea(20,70);
         sortie.append(toString());
@@ -48,27 +61,55 @@ public class BiblioTab extends Bibliotheque{
 
     @Override
     public void Ajouter() {
-        // TODO Auto-generated method stub
+        
+        int numero = Integer.parseInt(JOptionPane.showInputDialog(null, "Entrez le numero "));
+
+        int cond =0;
+        while(cond==0){
+            if(Rechercher(numero)){
+                numero = Integer.parseInt(JOptionPane.showInputDialog(null, "Numero existe \n Entrez un autre numero "));
+
+            }else{
+                Ouvrage[] tabTemp = new Ouvrage[taille+1]; 
+                for(int i=0;i<taille;i++){
+                    tabTemp[i]=tabBiblio[i];
+
+                } 
+                tabTemp[taille]= new CDisque(numero,"21/09/2022","father","Yousef Islam");
+                this.setTabBiblio(tabTemp);
+                this.setTaille(taille+1);
+        
+                Lister();
+                cond=1;
+            }
+        }
         
     }
 
     @Override
     public void Suprimer(int cote) {
-<<<<<<< HEAD
+        Ouvrage[] tabTemp = new Ouvrage[taille-1];  
+        for (int i = 0; i < taille-1; i++) {
+            if(tabBiblio[i].getCote() ==cote){
+                tabTemp = new Ouvrage[taille - 1];
+                for(int index = 0; index < i; index++){
+                    tabTemp[index] = tabBiblio[index];
+                }
+                for(int j = i; j < taille-1; j++){
+                    tabTemp[j] = tabBiblio[j+1];
+                }
+                break;
+            }
+        }   
+        this.setTabBiblio(tabTemp);
+        this.setTaille(taille-1);
+
         
-=======
-        while(!Rechercher(cote)){
-            JOptionPane.showMessageDialog(null, "Le numero de l'ouvrage n'existe pas");
-        }
-        JOptionPane.showMessageDialog(null, "Le numero est " + cote);
->>>>>>> parent of 0c5bf91 (21/09/2022_15h00)
-
     }
-
     @Override
     public boolean Rechercher(int cote) {
         boolean cond =false;
-        int taille = charger();
+        
         if(cote<=taille){
             for(Ouvrage ouvrage:tabBiblio){
                 if(ouvrage.getCote()==cote){
@@ -78,15 +119,18 @@ public class BiblioTab extends Bibliotheque{
 
             }
         }
+
         return cond;
     }
 
     @Override
     public String toString() {
+        
         String strLivre="";
         String strPeriodique="";
         String strCD="";
-        String retour= "  Le nombre total des ouvrages "+ String.valueOf(charger())+"\n";
+             
+        String retour= "  Le nombre total des ouvrages "+ taille +"\n";
         for(Ouvrage ouvrage:tabBiblio){
             if(ouvrage instanceof Livre){
                 strLivre += ((Livre) ouvrage).toString();
@@ -98,8 +142,24 @@ public class BiblioTab extends Bibliotheque{
         }
         retour+= "\n  Les Livres\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Auteur",15)+ Ouvrage.envollopeMot("\ttitre",15) + Ouvrage.envollopeMot("\tEditeur",15)+"\n"+ strLivre;
         retour+= "\n  Les periodiques\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Nom",15)+"\tNumero\tPeriodicite\n"+ strPeriodique;
-        retour+= "\n  Les CD\n  Cote\tDate\t"+ Ouvrage.envollopeMot("titre",15)+ Ouvrage.envollopeMot("\tAuteur",15)+"\n"+ strCD;
+        retour+= "\n  Les CD\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Auteur",15)+ Ouvrage.envollopeMot("\ttitre",15)+"\n"+ strCD;
         return retour;
+        
+        //return Arrays.toString(tabBiblio);
+    }
+
+
+    public Ouvrage[] getTabBiblio() {
+        return tabBiblio;
+    }
+    public void setTabBiblio(Ouvrage[] tabBiblio) {
+        this.tabBiblio = tabBiblio;
+    }
+    public int getTaille() {
+        return taille;
+    }
+    public void setTaille(int taille) {
+        this.taille = taille;
     }
     
     
