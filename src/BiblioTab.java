@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.*;
 
@@ -61,6 +62,8 @@ public class BiblioTab extends Bibliotheque{
 
     @Override
     public void Ajouter() {
+        ArrayList<String> listeChamps = new ArrayList<>(){{add("Titre","Auteur")}};
+        
         
         int numero = Integer.parseInt(JOptionPane.showInputDialog(null, "Entrez le numero "));
 
@@ -116,9 +119,6 @@ public class BiblioTab extends Bibliotheque{
     @Override
     public boolean Rechercher(int cote) {
         boolean cond =false;
-        
-        //if(cote<=taille){
-            //for(Ouvrage ouvrage:tabBiblio){
             for(int i=0;i<taille;i++){
                 if(tabBiblio[i].getCote()==cote){
                     cond =true;
@@ -126,8 +126,6 @@ public class BiblioTab extends Bibliotheque{
                 }
 
             }
-        //}
-
         return cond;
     }
 

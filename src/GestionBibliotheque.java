@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class GestionBibliotheque extends JFrame implements ActionListener{
-    static GestionBibliotheque gBibliotheque;
+    //static GestionBibliotheque gBibliotheque;
     private Bibliotheque biblio;
     static  String txtSortie="";
     private JTextArea sortie = new JTextArea(5,120);
@@ -14,18 +14,16 @@ public class GestionBibliotheque extends JFrame implements ActionListener{
     static JButton btnQuitter = new JButton("Quitter");
     static JPanel paneAffichage = new JPanel();
     static JPanel panePrincipal = new JPanel(new GridBagLayout());
+
+
     GestionBibliotheque(Bibliotheque biblio){
-        this.biblio = biblio;
+        
         if(biblio instanceof BiblioTab){
-            paneAffichage.remove(sortie);  
-           
-            // sortie.setText("");
-            txtSortie = ((BiblioTab) biblio).toString();
-            sortie.setText(txtSortie);
-            System.out.println(txtSortie);
-            setSortie(sortie);
-            paneAffichage.add(sortie);
+            this.biblio = (BiblioTab) biblio;
         }
+        txtSortie = biblio.toString();
+        sortie.setText(txtSortie);
+        setSortie(sortie);
         afficher();
     }
     public void afficher(){
@@ -42,6 +40,7 @@ public class GestionBibliotheque extends JFrame implements ActionListener{
         paneButton.add(btnAjouter);
         paneButton.add(btnSuprimer);
         paneButton.add(btnQuitter);
+        paneAffichage.add(sortie);
         c.ipadx = 1500;      //make this component tall
         c.ipady = 150;      //make this component tall
         c.weightx = 0.0;
@@ -70,7 +69,7 @@ public class GestionBibliotheque extends JFrame implements ActionListener{
         while(cond==0){
             if(biblio.Rechercher(cote)){
                 biblio.Suprimer(cote);
-                txtSortie = ((BiblioTab) biblio).toString();
+                txtSortie = biblio.toString();
                 sortie.setText(txtSortie);
                 panePrincipal.repaint();
                 cond=1;
@@ -97,7 +96,7 @@ public class GestionBibliotheque extends JFrame implements ActionListener{
 
     public static void main(String[] args) throws IOException {
         
-        gBibliotheque= new GestionBibliotheque(new BiblioTab());
+    new GestionBibliotheque(new BiblioTab());
     }
     public Bibliotheque getBiblio() {
         return biblio;
