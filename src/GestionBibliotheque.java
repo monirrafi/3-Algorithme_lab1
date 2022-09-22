@@ -5,31 +5,37 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class GestionBibliotheque extends JFrame implements ActionListener{
+    static GestionBibliotheque gBibliotheque;
     private Bibliotheque biblio;
-    static JTextArea sortie = new JTextArea(5,120);
+    static  String txtSortie="";
+    private JTextArea sortie = new JTextArea(5,120);
     static JButton btnAjouter = new JButton("Ajouter");
     static JButton btnSuprimer = new JButton("Suprimer");
     static JButton btnQuitter = new JButton("Quitter");
     static JPanel paneAffichage = new JPanel();
-GestionBibliotheque(Bibliotheque biblio){
+    static JPanel panePrincipal = new JPanel(new GridBagLayout());
+    GestionBibliotheque(Bibliotheque biblio){
         this.biblio = biblio;
         if(biblio instanceof BiblioTab){
-            sortie.append(((BiblioTab) biblio).toString());
+            paneAffichage.remove(sortie);  
+           
+            // sortie.setText("");
+            txtSortie = ((BiblioTab) biblio).toString();
+            sortie.setText(txtSortie);
+            System.out.println(txtSortie);
+            setSortie(sortie);
+            paneAffichage.add(sortie);
         }
+        afficher();
+    }
+    public void afficher(){
         setTitle("Bibliotheque");
         setPreferredSize(new Dimension(800,500));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //setLayout(null);
         GridBagConstraints c = new GridBagConstraints();
-        JPanel panePrincipal = new JPanel(new GridBagLayout());
         
         paneAffichage.setBackground(Color.white);
-        paneAffichage.add(sortie);
         JPanel paneButton = new JPanel(new FlowLayout(FlowLayout.CENTER));
-
-        //JButton btnAjouter = new JButton("Ajouter");
-        //JButton btnSuprimer = new JButton("Suprimer");
-        //JButton btnQuitter = new JButton("Quitter");
         btnQuitter.addActionListener(this);
         btnAjouter.addActionListener(this);
         btnSuprimer.addActionListener(this);
@@ -57,36 +63,53 @@ GestionBibliotheque(Bibliotheque biblio){
         setVisible(true);
 
     }
-
-    public static void main(String[] args) throws IOException {
-        
-        new GestionBibliotheque(new BiblioTab());
-        /*
-
-        BiblioTab biblioTab = new BiblioTab();
-        biblioTab.Lister();
-        int c = 2;
-        if(biblioTab.Rechercher(c)){
-            biblioTab.Suprimer(c);
-            biblioTab.Lister();
-        }else{
-            System.out.println(c + " n existe pas");
+    public void suprimerBilio(){
+        int cond = 0;
+        int cote = Integer.parseInt(JOptionPane.showInputDialog(null, 
+        "Entrez le numero a suprimer "));
+        while(cond==0){
+            if(biblio.Rechercher(cote)){
+                biblio.Suprimer(cote);
+                txtSortie = ((BiblioTab) biblio).toString();
+                sortie.setText(txtSortie);
+                panePrincipal.repaint();
+                cond=1;
+    
+            }else{
+                cote = Integer.parseInt(JOptionPane.showInputDialog(null, 
+                "Le numero " + cote + " n'existe pas \n Entrez un autre numero a suprimer "));
+    
+            }
         }
-        biblioTab.Ajouter();
-        new Affichage();*/
-    }
 
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == btnQuitter){
             System.exit(0);
         }else if(e.getSource() == btnAjouter){
-            paneAffichage.setVisible(false);
-            biblio.Suprimer(3);
-            paneAffichage.setVisible(true);
+            
         }else if(e.getSource() == btnSuprimer){
-            System.exit(0);
+            suprimerBilio();
         }
         
     }
+
+    public static void main(String[] args) throws IOException {
+        
+        gBibliotheque= new GestionBibliotheque(new BiblioTab());
+    }
+    public Bibliotheque getBiblio() {
+        return biblio;
+    }
+    public void setBiblio(Bibliotheque biblio) {
+        this.biblio = biblio;
+    }
+    public JTextArea getSortie() {
+        return sortie;
+    }
+    public void setSortie(JTextArea sortie) {
+        this.sortie = sortie;
+    }
+
 }

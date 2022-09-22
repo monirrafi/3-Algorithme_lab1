@@ -89,8 +89,15 @@ public class BiblioTab extends Bibliotheque{
     @Override
     public void Suprimer(int cote) {
         Ouvrage[] tabTemp = new Ouvrage[taille-1];  
-        for (int i = 0; i < taille-1; i++) {
-            if(tabBiblio[i].getCote() ==cote){
+
+            if(cote >= taille){
+                for(int index = 0; index < taille-1; index++){
+                    tabTemp[index] = tabBiblio[index];
+                }
+            }
+            for (int i = 0; i < taille-1; i++) {
+                //taille = taille-1;
+             if(tabBiblio[i].getCote() ==cote){
                 tabTemp = new Ouvrage[taille - 1];
                 for(int index = 0; index < i; index++){
                     tabTemp[index] = tabBiblio[index];
@@ -104,21 +111,22 @@ public class BiblioTab extends Bibliotheque{
         this.setTabBiblio(tabTemp);
         this.setTaille(taille-1);
 
-        
+        //Lister();
     }
     @Override
     public boolean Rechercher(int cote) {
         boolean cond =false;
         
-        if(cote<=taille){
-            for(Ouvrage ouvrage:tabBiblio){
-                if(ouvrage.getCote()==cote){
+        //if(cote<=taille){
+            //for(Ouvrage ouvrage:tabBiblio){
+            for(int i=0;i<taille;i++){
+                if(tabBiblio[i].getCote()==cote){
                     cond =true;
                     break;
                 }
 
             }
-        }
+        //}
 
         return cond;
     }
@@ -130,7 +138,8 @@ public class BiblioTab extends Bibliotheque{
         String strPeriodique="";
         String strCD="";
              
-        String retour= "  Le nombre total des ouvrages "+ taille +"\n";
+        String retour= "";
+        retour= "  Le nombre total des ouvrages "+ taille +"\n";
         for(Ouvrage ouvrage:tabBiblio){
             if(ouvrage instanceof Livre){
                 strLivre += ((Livre) ouvrage).toString();
