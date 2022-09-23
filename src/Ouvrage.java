@@ -1,4 +1,7 @@
-public class Ouvrage {
+import java.io.Serializable;
+
+public class Ouvrage implements Serializable{
+    private static final long serialversionUID = 129348938L;
     protected String date;
     protected int cote;
     public Ouvrage( int cote,String date) {

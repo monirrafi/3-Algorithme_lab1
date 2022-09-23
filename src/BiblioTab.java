@@ -1,29 +1,66 @@
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.*;
 
 
 
 public class BiblioTab extends Bibliotheque{
     final static int MAX =20;
-    final static String fichier = "src\\Biblio.txt";
+    final static String FICHIER_TXT = "src\\Biblio.txt";
+    final static String FICHIER_OBJ = "src\\Biblio.obj";
+    static BufferedReader tmpBiblio;
+    static ObjectOutputStream tmpWriteObj;
+    static ObjectInputStream tmpReadObj;
     
     private Ouvrage[] tabBiblio = new Ouvrage[MAX];
-    static BufferedReader tmpBiblio; 
     private int taille=0;
-    public BiblioTab() {
+    public BiblioTab() throws Exception {
         this.tabBiblio = charger();
     }
     public BiblioTab(Ouvrage[] tabBiblio) {
         this.setTabBiblio(tabBiblio);
     }
+    @Override
+    public boolean Rechercher(int cote) {
+        boolean cond =false;
+            for(int i=0;i<taille;i++){
+                if(tabBiblio[i].getCote()==cote){
+                    cond =true;
+                    break;
+                }
+
+            }
+        return cond;
+    }
+
+    public Ouvrage[] chargerObj() throws Exception {
+		try {
+			tmpReadObj = new ObjectInputStream (new FileInputStream (FICHIER_OBJ));
+			tabBiblio = (Ouvrage[]) tmpReadObj.readObject();
+            this.setTaille(tabBiblio.length);
     
-   
-    public Ouvrage[] charger() {
+		}catch(FileNotFoundException e)
+		{
+			System.out.println("Fichier introuvable. Vérifiez le chemin et nom du fichier.");
+		}catch(IOException e)
+		{
+			System.out.println("Un probléme est arrivé lors de la manipulation du fichier. V�rifiez vos donn�es.");
+            System.out.println(e.getMessage());
+		}catch(Exception e)
+		{
+			System.out.println("Un probléme est arrivé lors du chargement du fichier. Contactez l'administrateur.");
+		}finally
+		{// Exécuté si erreur ou pas
+			tmpReadObj.close();
+		}
+        return tabBiblio;
+	}
+    
+    public Ouvrage[] chargerTxt() {
         int r=0;
         try {
-            tmpBiblio = new BufferedReader(new FileReader(new File(fichier)));
+            tmpBiblio = new BufferedReader(new FileReader(FICHIER_TXT));
             String ligne = tmpBiblio.readLine();
             String[] elt = new String[6];
             int i=0;
@@ -53,42 +90,125 @@ public class BiblioTab extends Bibliotheque{
     return tabBiblio;
 
     }
-    
-    public void Lister(){
-        JTextArea sortie = new JTextArea(20,70);
-        sortie.append(toString());
-        JOptionPane.showMessageDialog(null, sortie);
+   
+    public Ouvrage[] charger() throws Exception {
+        
+        File file = new File(FICHIER_OBJ);
+        if(file.exists()){
+            return chargerObj();
+        }else{
+            return chargerTxt();
+        }
+
     }
+    
+    public void sauvegarder() throws IOException {
+		try {
+			tmpWriteObj = new ObjectOutputStream(new FileOutputStream(FICHIER_OBJ));
+			tmpWriteObj.writeObject(tabBiblio);
+		} catch (FileNotFoundException e) {
+			System.out.println("Fichier introuvable. Vérifiez le chemin et nom du fichier.");
+		} catch (IOException e) {
+			System.out.println("Un probléme est arrivé lors de la manipulation du fichier. V�rifiez vos donn�es.");
+		} catch (Exception e) {
+			System.out.println("Un probléme est arrivé lors du chargement du fichier. Contactez l'administrateur.");
+		} finally {// Exécuté si erreur ou pas
+			tmpWriteObj.close();
+		}
+	}
 
     @Override
-    public void Ajouter() {
-        ArrayList<String> listeChamps = new ArrayList<>(){{add("Titre","Auteur")}};
-        
-        
-        int numero = Integer.parseInt(JOptionPane.showInputDialog(null, "Entrez le numero "));
-
+    public void Ajouter(String typeListe) {
+        int cote=0;
         int cond =0;
+        String strCote = JOptionPane.showInputDialog(null, "Entrez le numero cote");
+        if(strCote==null || strCote.equals(" ")){
+            cote=0;
+        }else{
+            cote = Integer.parseInt(strCote);
+        }
         while(cond==0){
-            if(Rechercher(numero)){
-                numero = Integer.parseInt(JOptionPane.showInputDialog(null, "Numero existe \n Entrez un autre numero "));
 
-            }else{
+            if(Rechercher(cote)){
+                strCote = JOptionPane.showInputDialog(null, "Le cote " + cote + " existe deja \n Entrez un autre numero cote");
+                if(strCote==null || strCote.equals(" ")){
+                    cote=0;
+                }else{
+                    cote = Integer.parseInt(strCote);
+                }
+                    }else{
+                cond=1;
+            }  
+        }
+
+        if(cote != 0){   
+            String date="";
+            String  titre="", auteur="",editeur="";
+            int numero=0, periodicite=0;
+    
+            Dimension d =new Dimension(150,20);
+            ArrayList<JTextField> listeJtxt = new ArrayList<>();
+            ArrayList<String> listeChamps= new ArrayList<String>();
+           
+            if(typeListe.equals("livre")){
+                listeChamps = new ArrayList<String>(){{add("Date");add("Auteur");add("Titre");add("Editeur");}};
+            }else if(typeListe.equals("cd")){
+                listeChamps = new ArrayList<String>(){{add("Date");add("Auteur");add("Titre");}};
+            }else if(typeListe.equals("periodique")){
+                listeChamps = new ArrayList<String>(){{add("Date");add("Nom");add("Numero");add("Periodicite");}};
+            }    
+            
+            JPanel gPane = new JPanel(new GridLayout(listeChamps.size(),1));
+
+            for(String str:listeChamps){
+                JPanel pane = new JPanel();
+                JTextField jtxt = new JTextField();
+                jtxt.setPreferredSize(d);
+                JLabel lbl = new JLabel(str);
+                lbl.setPreferredSize(d);
+                lbl.setLabelFor(jtxt);
+                listeJtxt.add(jtxt);
+                pane.add(lbl);
+                pane.add(jtxt);
+                gPane.add(pane);
+
+            }
+            int res = JOptionPane.showConfirmDialog(null,gPane);
+            if(res == JOptionPane.YES_OPTION){
+        //        cote = Integer.parseInt(listeJtxt.get(0).getText());
+                date = listeJtxt.get(0).getText();
+                auteur = listeJtxt.get(1).getText();
+
+                if(typeListe.equals("livre")){
+                    titre = listeJtxt.get(2).getText();
+                    editeur =listeJtxt.get(3).getText();
+                }else if(typeListe.equals("cd")){
+                    titre = listeJtxt.get(2).getText();
+                }else if(typeListe.equals("periodique")){
+                    numero = Integer.parseInt(listeJtxt.get(2).getText());
+                    periodicite = Integer.parseInt(listeJtxt.get(3).getText());
+                }    
+            
                 Ouvrage[] tabTemp = new Ouvrage[taille+1]; 
                 for(int i=0;i<taille;i++){
                     tabTemp[i]=tabBiblio[i];
 
                 } 
-                tabTemp[taille]= new CDisque(numero,"21/09/2022","father","Yousef Islam");
+                if(typeListe.equals("livre")){
+                    tabTemp[taille]= new Livre(cote,date,auteur,titre,editeur);
+                }else if(typeListe.equals("cd")){
+                    tabTemp[taille]= new CDisque(cote,date,auteur,titre);
+                }else if(typeListe.equals("periodique")){
+                    tabTemp[taille]= new Periodique(cote,date,titre,numero,periodicite);
+                }    
+                        
                 this.setTabBiblio(tabTemp);
                 this.setTaille(taille+1);
-        
-                Lister();
-                cond=1;
+                        
             }
+            
         }
-        
     }
-
     @Override
     public void Suprimer(int cote) {
         Ouvrage[] tabTemp = new Ouvrage[taille-1];  
@@ -117,19 +237,6 @@ public class BiblioTab extends Bibliotheque{
         //Lister();
     }
     @Override
-    public boolean Rechercher(int cote) {
-        boolean cond =false;
-            for(int i=0;i<taille;i++){
-                if(tabBiblio[i].getCote()==cote){
-                    cond =true;
-                    break;
-                }
-
-            }
-        return cond;
-    }
-
-    @Override
     public String toString() {
         
         String strLivre="";
@@ -149,13 +256,11 @@ public class BiblioTab extends Bibliotheque{
         }
         retour+= "\n  Les Livres\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Auteur",15)+ Ouvrage.envollopeMot("\ttitre",15) + Ouvrage.envollopeMot("\tEditeur",15)+"\n"+ strLivre;
         retour+= "\n  Les periodiques\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Nom",15)+"\tNumero\tPeriodicite\n"+ strPeriodique;
-        retour+= "\n  Les CD\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Auteur",15)+ Ouvrage.envollopeMot("\ttitre",15)+"\n"+ strCD;
+        retour+= "\n  Les CD\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Titre",15)+ Ouvrage.envollopeMot("\tAuteur",15)+"\n"+ strCD;
         return retour;
         
         //return Arrays.toString(tabBiblio);
     }
-
-
     public Ouvrage[] getTabBiblio() {
         return tabBiblio;
     }

@@ -1,7 +1,7 @@
 public class CDisque extends Ouvrage{
-    private String titreCD, auteurCD;
+    private String auteurCD, titreCD;
 
-    public CDisque(int cote,String date, String titreCD, String auteurCD) {
+    public CDisque(int cote,String date, String auteurCD, String titreCD) {
         super(cote,date);
         this.titreCD = titreCD;
         this.auteurCD = auteurCD;
@@ -29,7 +29,7 @@ public class CDisque extends Ouvrage{
     @Override
     public String toString() {
 
-        return  super.toString() +  "\t" + super.envollopeMot(auteurCD,15) + "\t" + super.envollopeMot(titreCD,15) + "\n";
+        return  super.toString() +  "\t" + super.envollopeMot(titreCD,15) + "\t" + super.envollopeMot(auteurCD,15) + "\n";
     }
 
 }
