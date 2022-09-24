@@ -3,12 +3,14 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.text.*;
 
 public class GestionBibliotheque extends JFrame implements actionEcouteur{
     static GestionBibliotheque gBibliotheque;
     private Bibliotheque biblio;
     private String txtSortie="";
-    private JTextArea sortie = new JTextArea(5,120);
+    //private JTextArea sortie = new JTextArea(5,120);
+    private JTextPane sortie = new JTextPane();
 
     //static JButton btnAjouter = new JButton("Ajouter");
     static JButton btnSuprimer;
@@ -19,7 +21,7 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
     static JButton btnBiblioPer = new JButton("Biblio Personnel");
     
     static JPanel paneAffichage = new JPanel();
-    static JPanel panePrincipal = new JPanel(new GridBagLayout());
+    static JPanel panePrincipal = new JPanel();
     /*
      * Creer un radio bouton
      * 
@@ -35,7 +37,26 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         menu();
         cliquer();
     }
+    private void changerEntete(JTextPane tp, String msg, Color c)
+        {
+        StyleContext sc = StyleContext.getDefaultStyleContext();
+        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Background, c);
+        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Lucida Console");
+        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
+        int len = tp.getDocument().getLength();
+        tp.setCaretPosition(len);
+        tp.setCharacterAttributes(aset, false);
+        tp.replaceSelection(msg);
+        }
+    public void changerSortie(){
+        txtSortie = "";
+        txtSortie = biblio.toString();
+        sortie = new JTextPane();
+        sortie.setSize(new Dimension(5,120));
+        changerEntete(sortie, txtSortie.substring(0,txtSortie.indexOf("\n")), Color.YELLOW);
+        changerEntete(sortie, txtSortie.substring(txtSortie.indexOf("\n")), Color.WHITE);
 
+    }
     GestionBibliotheque(Bibliotheque biblio){
         
         if(biblio instanceof BiblioTab){
@@ -43,9 +64,8 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         }else if(biblio instanceof BiblioLink){
             this.biblio = (BiblioLink) biblio;
         }
-        txtSortie = biblio.toString();
+        changerSortie();
         sortie.setText(txtSortie);
-        setSortie(sortie);
         afficher();
         cliquer();
     }
@@ -53,17 +73,22 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         setTitle("Bibliotheque");
         setPreferredSize(new Dimension(800,500));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JPanel paneMenu = new JPanel();
+        panePrincipal = new JPanel(new FlowLayout(FlowLayout.CENTER,15,200));
         btnBiblioTab = new JButton("Biblio tableau");
         btnBiblioLinked = new JButton("Biblio linked");
         btnBiblioPer = new JButton("Biblio Personnel");
 
-        paneMenu.add(btnBiblioTab);
-        paneMenu.add(btnBiblioLinked);
-        paneMenu.add(btnBiblioPer);
-        paneMenu.add(btnQuitter);
+        btnBiblioLinked.setVisible(true);
+        btnBiblioTab.setVisible(true);
+        btnBiblioPer.setVisible(true);
+        btnQuitter.setVisible(true);
+        
+        panePrincipal.add(btnBiblioTab);
+        panePrincipal.add(btnBiblioLinked);
+        panePrincipal.add(btnBiblioPer);
+        panePrincipal.add(btnQuitter);
     
-        add(paneMenu);
+        add(panePrincipal);
         pack();
         setVisible(true);
         
@@ -74,8 +99,10 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         GridBagConstraints c = new GridBagConstraints();
 
-        
+        panePrincipal = new JPanel(new GridBagLayout());
+        paneAffichage = new JPanel(new FlowLayout(FlowLayout.LEFT));
         paneAffichage.setBackground(Color.white);
+        changerSortie();
         paneAffichage.add(sortie);
 
 
@@ -127,8 +154,8 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         panePrincipal.add(paneAffichage,c);
 
         //c.fill = GridBagConstraints.HORIZONTAL;
-        c.ipadx = 800;      //make this component tall
-        c.ipady = 50;      //make this component tall
+        c.ipadx = 800;      
+        c.ipady = 50;      
         c.weightx = 0.0;
         c.gridx = 0;
         c.gridy = 1;
@@ -156,6 +183,7 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
                 }else if(biblio.Rechercher(cote)){
                     biblio.Suprimer(cote);
                     txtSortie = biblio.toString();
+                    //changerSortie();
                     sortie.setText(txtSortie);
                     panePrincipal.repaint();
                     cond=1;
@@ -196,10 +224,8 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
             ajouterBiblio("periodique");
         }else if(e.getSource() == btnBiblioLinked){
             try {
-                gBibliotheque = new GestionBibliotheque(new BiblioLink());
-                txtSortie = biblio.toString();
-                sortie.setText(txtSortie);
-                panePrincipal.repaint();
+                biblio = new BiblioLink();
+                gBibliotheque = new GestionBibliotheque(biblio);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -207,11 +233,8 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
 //            ajouterBiblio("periodique");
         }else if(e.getSource() == btnBiblioTab){
             try {
-                gBibliotheque = new GestionBibliotheque(new BiblioTab());
-                txtSortie = biblio.toString();
-                sortie.setText(txtSortie);
-                panePrincipal.repaint();
-                //gBibliotheque.repaint();
+                biblio = new BiblioTab();
+                gBibliotheque = new GestionBibliotheque(biblio);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -219,6 +242,8 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
             try {
                 biblio.sauvegarder();
                 gBibliotheque = new GestionBibliotheque();
+                //panePrincipal.repaint();
+                //gBibliotheque.repaint();
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -237,10 +262,10 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
     public void setBiblio(Bibliotheque biblio) {
         this.biblio = biblio;
     }
-    public JTextArea getSortie() {
+    public JTextPane getSortie() {
         return sortie;
     }
-    public void setSortie(JTextArea sortie) {
+    public void setSortie(JTextPane sortie) {
         this.sortie = sortie;
     }
 

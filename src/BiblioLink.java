@@ -240,7 +240,7 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
         String strCD="";
              
         String retour= "";
-        retour= "  Le nombre total des ouvrages "+ linkBiblio.size() +"\n";
+        retour= "  Le nombre total des ouvrages "+ linkBiblio.size() +" par linkedList\n";
         for(Ouvrage ouvrage:linkBiblio){
             if(ouvrage instanceof Livre){
                 strLivre += ((Livre) ouvrage).toString();

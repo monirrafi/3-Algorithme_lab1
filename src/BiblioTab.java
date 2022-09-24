@@ -252,13 +252,13 @@ public Ouvrage[] chargerObj() throws Exception {
     }
     @Override
     public String toString() {
-        
+        JTextPane pane = new JTextPane();
         String strLivre="";
         String strPeriodique="";
         String strCD="";
              
         String retour= "";
-        retour= "  Le nombre total des ouvrages "+ taille +"\n";
+        retour= "  Le nombre total des ouvrages "+ taille +" par tableau\n";
         for(Ouvrage ouvrage:tabBiblio){
             if(ouvrage instanceof Livre){
                 strLivre += ((Livre) ouvrage).toString();
@@ -271,6 +271,7 @@ public Ouvrage[] chargerObj() throws Exception {
         retour+= "\n  Les Livres\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Auteur",15)+ Ouvrage.envollopeMot("\ttitre",15) + Ouvrage.envollopeMot("\tEditeur",15)+"\n"+ strLivre;
         retour+= "\n  Les periodiques\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Nom",15)+"\tNumero\tPeriodicite\n"+ strPeriodique;
         retour+= "\n  Les CD\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Titre",15)+ Ouvrage.envollopeMot("\tAuteur",15)+"\n"+ strCD;
+        pane.setText(retour);
         return retour;
     }
     public Ouvrage[] getTabBiblio() {
