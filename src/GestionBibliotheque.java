@@ -4,39 +4,69 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public class GestionBibliotheque extends JFrame implements ActionListener{
-    //static GestionBibliotheque gBibliotheque;
+public class GestionBibliotheque extends JFrame implements actionEcouteur{
+    static GestionBibliotheque gBibliotheque;
     private Bibliotheque biblio;
     private String txtSortie="";
     private JTextArea sortie = new JTextArea(5,120);
-    
-    static JButton btnAjouter = new JButton("Ajouter");
-    static JButton btnSuprimer = new JButton("Suprimer");
+
+    //static JButton btnAjouter = new JButton("Ajouter");
+    static JButton btnSuprimer;
     static JButton btnQuitter = new JButton("Quitter");
+    static JButton btnMenu;
+    static JButton btnBiblioTab = new JButton("Biblio tableau");
+    static JButton btnBiblioLinked = new JButton("Biblio linked");
+    static JButton btnBiblioPer = new JButton("Biblio Personnel");
+    
     static JPanel paneAffichage = new JPanel();
     static JPanel panePrincipal = new JPanel(new GridBagLayout());
     /*
      * Creer un radio bouton
      * 
      */
-    static JRadioButton vide = new JRadioButton("");
-    static JRadioButton livre = new JRadioButton("Livre");
-    static JRadioButton cd = new JRadioButton("CD");
-    static JRadioButton periodique = new JRadioButton("Periodique");
+    static JRadioButton vide;
+    static JRadioButton livre;
+    static JRadioButton cd;
+    static JRadioButton periodique;
     JLabel lblChoix = new JLabel("      Choisir un ouvrage pour ajouter");
     
     
-
+    GestionBibliotheque(){
+        menu();
+        cliquer();
+    }
 
     GestionBibliotheque(Bibliotheque biblio){
         
         if(biblio instanceof BiblioTab){
             this.biblio = (BiblioTab) biblio;
+        }else if(biblio instanceof BiblioLink){
+            this.biblio = (BiblioLink) biblio;
         }
         txtSortie = biblio.toString();
         sortie.setText(txtSortie);
         setSortie(sortie);
         afficher();
+        cliquer();
+    }
+    public void menu() {
+        setTitle("Bibliotheque");
+        setPreferredSize(new Dimension(800,500));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JPanel paneMenu = new JPanel();
+        btnBiblioTab = new JButton("Biblio tableau");
+        btnBiblioLinked = new JButton("Biblio linked");
+        btnBiblioPer = new JButton("Biblio Personnel");
+
+        paneMenu.add(btnBiblioTab);
+        paneMenu.add(btnBiblioLinked);
+        paneMenu.add(btnBiblioPer);
+        paneMenu.add(btnQuitter);
+    
+        add(paneMenu);
+        pack();
+        setVisible(true);
+        
     }
     public void afficher(){
         setTitle("Bibliotheque");
@@ -53,6 +83,11 @@ public class GestionBibliotheque extends JFrame implements ActionListener{
         paneRadio.setBackground(Color.lightGray);
         JPanel paneElementradio = new JPanel();
         paneElementradio.setBackground(Color.lightGray);
+        vide = new JRadioButton("");
+        livre = new JRadioButton("Livre");
+        cd = new JRadioButton("CD");
+        periodique = new JRadioButton("Periodique");
+    
         vide.setBackground(Color.lightGray);
         livre.setBackground(Color.lightGray);
         cd.setBackground(Color.lightGray);
@@ -69,9 +104,6 @@ public class GestionBibliotheque extends JFrame implements ActionListener{
         paneElementradio.add(livre);
         paneElementradio.add(cd);
         paneElementradio.add(periodique);
-        livre.addActionListener(this);
-        cd.addActionListener(this);
-        periodique.addActionListener(this);
 
         paneRadio.add(lblChoix);
         paneRadio.add(paneElementradio);
@@ -79,13 +111,11 @@ public class GestionBibliotheque extends JFrame implements ActionListener{
         JPanel paneButton = new JPanel(new FlowLayout(FlowLayout.LEFT,40,20));
         paneButton.setBackground(new Color(51,204,255));
 
-        btnQuitter.addActionListener(this);
-        //btnAjouter.addActionListener(this);
-        btnSuprimer.addActionListener(this);
+        btnSuprimer = new JButton("Suprimer");
+        btnMenu = new JButton("Retour au Menu");        
         paneButton.add(paneRadio);
-        //paneButton.add(btnAjouter);
         paneButton.add(btnSuprimer);
-        paneButton.add(btnQuitter);
+        paneButton.add(btnMenu);
 
         //dispaly des panels
         c.ipadx = 1500;      
@@ -110,25 +140,39 @@ public class GestionBibliotheque extends JFrame implements ActionListener{
 
     }
     public void suprimerBilio(){
-        int cond = 0;
-        int cote = Integer.parseInt(JOptionPane.showInputDialog(null, 
-        "Entrez le numero a suprimer "));
-        while(cond==0){
-            if(biblio.Rechercher(cote)){
-                biblio.Suprimer(cote);
-                txtSortie = biblio.toString();
-                sortie.setText(txtSortie);
-                panePrincipal.repaint();
-                cond=1;
-    
-            }else{
-                cote = Integer.parseInt(JOptionPane.showInputDialog(null, 
-                "Le numero " + cote + " n'existe pas \n Entrez un autre numero a suprimer "));
-    
-            }
+        int cote=0,cond = 0;
+        
+        String strCote = JOptionPane.showInputDialog(null, 
+        "Entrez le numero a suprimer ");
+ 
+        if(strCote==null || strCote.equals(" ")){
+            cote=0;
+        }else{
+            cote = Integer.parseInt(strCote);
         }
-
-    }
+        while(cond==0){
+                if(cote==0){
+                    cond=1;
+                }else if(biblio.Rechercher(cote)){
+                    biblio.Suprimer(cote);
+                    txtSortie = biblio.toString();
+                    sortie.setText(txtSortie);
+                    panePrincipal.repaint();
+                    cond=1;
+        
+                }else{
+                    strCote = JOptionPane.showInputDialog(null, 
+                    "Le numero " + cote + " n'existe pas \n Entrez un autre numero a suprimer ");
+            
+                    if(strCote==null || strCote.equals(" ")){
+                        cond=1;
+                    }else{
+                        cote = Integer.parseInt(strCote);
+                    }
+        
+                }
+            }
+     }
     public void ajouterBiblio(String typeOuvrage) {
         
             biblio.Ajouter(typeOuvrage);
@@ -138,15 +182,10 @@ public class GestionBibliotheque extends JFrame implements ActionListener{
             vide.setSelected(true);
     }
         
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    
+    public void actionBouton(ActionEvent e) {
         if(e.getSource() == btnQuitter){
-            try {
-                biblio.sauvegarder();
                 System.exit(0);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
         }else if(e.getSource() == btnSuprimer){
             suprimerBilio();
         }else if(e.getSource() == livre){
@@ -155,13 +194,42 @@ public class GestionBibliotheque extends JFrame implements ActionListener{
             ajouterBiblio("cd");
         }else if(e.getSource() == periodique){
             ajouterBiblio("periodique");
+        }else if(e.getSource() == btnBiblioLinked){
+            try {
+                gBibliotheque = new GestionBibliotheque(new BiblioLink());
+                txtSortie = biblio.toString();
+                sortie.setText(txtSortie);
+                panePrincipal.repaint();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }else if(e.getSource() == btnBiblioPer){
+//            ajouterBiblio("periodique");
+        }else if(e.getSource() == btnBiblioTab){
+            try {
+                gBibliotheque = new GestionBibliotheque(new BiblioTab());
+                txtSortie = biblio.toString();
+                sortie.setText(txtSortie);
+                panePrincipal.repaint();
+                //gBibliotheque.repaint();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }else if(e.getSource() == btnMenu){
+            try {
+                biblio.sauvegarder();
+                gBibliotheque = new GestionBibliotheque();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
         }
         
     }
 
     public static void main(String[] args) throws Exception {
         
-    new GestionBibliotheque(new BiblioTab());
+        gBibliotheque = new GestionBibliotheque();
     }
     public Bibliotheque getBiblio() {
         return biblio;
@@ -174,6 +242,20 @@ public class GestionBibliotheque extends JFrame implements ActionListener{
     }
     public void setSortie(JTextArea sortie) {
         this.sortie = sortie;
+    }
+
+    @Override
+    public void cliquer() {
+        btnBiblioTab.addActionListener(this::actionBouton);
+        btnBiblioLinked.addActionListener(this::actionBouton);
+        btnBiblioPer.addActionListener(this::actionBouton);
+        btnQuitter.addActionListener(this::actionBouton);
+        livre.addActionListener(this::actionBouton);
+        cd.addActionListener(this::actionBouton);
+        periodique.addActionListener(this::actionBouton);
+        btnMenu.addActionListener(this::actionBouton);
+        btnSuprimer.addActionListener(this::actionBouton);
+        
     }
 
 }
