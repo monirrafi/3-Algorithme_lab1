@@ -14,6 +14,7 @@ public class BiblioLink extends Bibliotheque{
     static BufferedReader tmpBiblio;
     static ObjectOutputStream tmpWriteObj;
     static ObjectInputStream tmpReadObj;
+    static long exucuteTime;
 /*============================================================================================================ */
 /*=========================================== Constructeur ===================================================== */
 /*============================================================================================================ */
@@ -220,6 +221,8 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
     }
     @Override
     public void Suprimer(int cote) {
+        long startTime = System.nanoTime();
+
         for(int i=0;i<linkBiblio.size();i++){
             if(linkBiblio.get(i).getCote() == cote){
                 linkBiblio.remove(i);
@@ -227,6 +230,9 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
 
             }
         }
+        long stopTime =System.nanoTime();
+        super.setExucuteTime(stopTime-startTime);
+
        // this.setlinkBiblio(tabTemp);
         //this.setTaille(taille-1);
 
@@ -234,6 +240,7 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
     }
     @Override
     public String toString() {
+        long startTime = System.nanoTime();
         
         String strLivre="";
         String strPeriodique="";
@@ -253,6 +260,8 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
         retour+= "\n  Les Livres\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Auteur",15)+ Ouvrage.envollopeMot("\ttitre",15) + Ouvrage.envollopeMot("\tEditeur",15)+"\n"+ strLivre;
         retour+= "\n  Les periodiques\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Nom",15)+"\tNumero\tPeriodicite\n"+ strPeriodique;
         retour+= "\n  Les CD\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Titre",15)+ Ouvrage.envollopeMot("\tAuteur",15)+"\n"+ strCD;
+        long stopTime =System.nanoTime();
+        super.setExucuteTime(stopTime-startTime);
         return retour;
     }
     public LinkedList<Ouvrage> getLinkBiblio() {
@@ -262,5 +271,9 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
         this.linkBiblio = linkBiblio;
     }
     
-    
+    public long getTime() {
+        return exucuteTime;
+        
+    }
+
 }

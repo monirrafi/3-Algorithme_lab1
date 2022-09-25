@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import javax.swing.*;
@@ -14,6 +16,7 @@ public class BiblioTab extends Bibliotheque{
     static BufferedReader tmpBiblio;
     static ObjectOutputStream tmpWriteObj;
     static ObjectInputStream tmpReadObj;
+    static long exucuteTime;
 /*============================================================================================================ */
 /*=========================================== Constructeur ===================================================== */
 /*============================================================================================================ */
@@ -85,7 +88,7 @@ public Ouvrage[] chargerObj() throws Exception {
     return tabBiblio;
 
     }
-   
+
     public Ouvrage[] charger() throws Exception {
         
         File file = new File(FICHIER_OBJ);
@@ -225,6 +228,7 @@ public Ouvrage[] chargerObj() throws Exception {
     }
     @Override
     public void Suprimer(int cote) {
+        long startTime = System.nanoTime();
         Ouvrage[] tabTemp = new Ouvrage[taille-1];  
 
             if(cote >= taille){
@@ -244,7 +248,9 @@ public Ouvrage[] chargerObj() throws Exception {
                 }
                 break;
             }
-        }   
+        }  
+        long stopTime =System.nanoTime();
+        super.setExucuteTime(stopTime-startTime);
         this.setTabBiblio(tabTemp);
         this.setTaille(taille-1);
 
@@ -252,7 +258,7 @@ public Ouvrage[] chargerObj() throws Exception {
     }
     @Override
     public String toString() {
-        JTextPane pane = new JTextPane();
+        long startTime = System.nanoTime();
         String strLivre="";
         String strPeriodique="";
         String strCD="";
@@ -271,7 +277,9 @@ public Ouvrage[] chargerObj() throws Exception {
         retour+= "\n  Les Livres\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Auteur",15)+ Ouvrage.envollopeMot("\ttitre",15) + Ouvrage.envollopeMot("\tEditeur",15)+"\n"+ strLivre;
         retour+= "\n  Les periodiques\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Nom",15)+"\tNumero\tPeriodicite\n"+ strPeriodique;
         retour+= "\n  Les CD\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Titre",15)+ Ouvrage.envollopeMot("\tAuteur",15)+"\n"+ strCD;
-        pane.setText(retour);
+        long stopTime =System.nanoTime();
+        super.setExucuteTime(stopTime-startTime);
+
         return retour;
     }
     public Ouvrage[] getTabBiblio() {
@@ -286,6 +294,9 @@ public Ouvrage[] chargerObj() throws Exception {
     public void setTaille(int taille) {
         this.taille = taille;
     }
-    
-    
+    public long getTime() {
+        return exucuteTime;
+        
+    }
+
 }

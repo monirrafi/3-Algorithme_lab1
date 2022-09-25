@@ -64,6 +64,7 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         
         if(biblio instanceof BiblioTab){
             this.biblio = (BiblioTab) biblio;
+            //k=((BiblioTab) biblio).getTime();
         }else if(biblio instanceof BiblioLink){
             this.biblio = (BiblioLink) biblio;
         }
@@ -76,23 +77,20 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         setTitle("Bibliotheque");
         setPreferredSize(new Dimension(800,500));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        panePrincipal = new JPanel(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
-        JPanel paneTab = new JPanel();
-        paneTab.setBackground(Color.BLUE);
-        JPanel paneLink = new JPanel();
-        paneLink.setBackground(Color.orange);
-        JPanel panePerso = new JPanel();
-        panePerso.setBackground(Color.BLUE);
-        
-        JPanel paneButton = new JPanel(new FlowLayout(FlowLayout.CENTER,15,200));
+        panePrincipal = new JPanel(new FlowLayout(FlowLayout.CENTER,15,200));
         btnBiblioTab = new JButton("Biblio tableau");
         btnBiblioLinked = new JButton("Biblio linked");
         btnBiblioPer = new JButton("Biblio Personnel");
-        paneButton.add(btnBiblioTab);
-        paneButton.add(btnBiblioLinked);
-        paneButton.add(btnBiblioPer);
-        paneButton.add(btnQuitter);
+
+        btnBiblioLinked.setVisible(true);
+        btnBiblioTab.setVisible(true);
+        btnBiblioPer.setVisible(true);
+        btnQuitter.setVisible(true);
+        
+        panePrincipal.add(btnBiblioTab);
+        panePrincipal.add(btnBiblioLinked);
+        panePrincipal.add(btnBiblioPer);
+        panePrincipal.add(btnQuitter);
     
         add(panePrincipal);
         pack();
@@ -249,14 +247,6 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-            if(biblio instanceof BiblioTab){
-                lblTimerTab.setText("Le temps est du tableau "+biblio.getExucuteTime());
-
-            }else if(biblio instanceof BiblioLink){
-                lblTimerLink.setText("Le temps est de link "+biblio.getExucuteTime());
-
-            }
-
         }else if(e.getSource() == btnBiblioPer){
 //            ajouterBiblio("periodique");
         }else if(e.getSource() == btnBiblioTab){
@@ -266,14 +256,6 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-            if(biblio instanceof BiblioTab){
-                lblTimerTab.setText("Le temps est du tableau "+biblio.getExucuteTime());
-
-            }else if(biblio instanceof BiblioLink){
-                lblTimerLink.setText("Le temps est de link "+biblio.getExucuteTime());
-
-            }
-
         }else if(e.getSource() == btnMenu){
             try {
                 
