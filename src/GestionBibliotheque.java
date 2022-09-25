@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.HashMap;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -13,12 +14,13 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
     private JTextPane sortie = new JTextPane();
 
     //static JButton btnAjouter = new JButton("Ajouter");
-    static JButton btnSuprimer;
+    static JButton btnSuprimer= new JButton("Suprimer");
     static JButton btnQuitter = new JButton("Quitter");
-    static JButton btnMenu;
+    static JButton btnMenu= new JButton("Retour au menu");
     static JButton btnBiblioTab = new JButton("Biblio tableau");
     static JButton btnBiblioLinked = new JButton("Biblio linked");
     static JButton btnBiblioPer = new JButton("Biblio Personnel");
+    static JTextPane paneStatistiques;
     
     static JLabel lblTimerTab = new JLabel("le temps de tableau est  0");
     static JLabel lblTimerLink = new JLabel("le temps de link est  0");
@@ -29,14 +31,14 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
      * Creer un radio bouton
      * 
      */
-    static JRadioButton vide;
-    static JRadioButton livre;
-    static JRadioButton cd;
-    static JRadioButton periodique;
+    static JRadioButton vide = new JRadioButton();
+    static JRadioButton livre = new JRadioButton();
+    static JRadioButton cd=new JRadioButton();
+    static JRadioButton periodique = new JRadioButton();
     JLabel lblChoix = new JLabel("      Choisir un ouvrage pour ajouter");
     
     
-    GestionBibliotheque(){
+    GestionBibliotheque() {
         menu();
         cliquer();
     }
@@ -64,6 +66,7 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         
         if(biblio instanceof BiblioTab){
             this.biblio = (BiblioTab) biblio;
+            //k=((BiblioTab) biblio).getTime();
         }else if(biblio instanceof BiblioLink){
             this.biblio = (BiblioLink) biblio;
         }
@@ -72,27 +75,51 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         afficher();
         cliquer();
     }
-    public void menu() {
+    public void menu(){
+        try {
+            Bibliotheque.chargerMap();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         setTitle("Bibliotheque");
-        setPreferredSize(new Dimension(800,500));
+        setPreferredSize(new Dimension(1500,500));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panePrincipal = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        JPanel paneTab = new JPanel();
-        paneTab.setBackground(Color.BLUE);
-        JPanel paneLink = new JPanel();
-        paneLink.setBackground(Color.orange);
-        JPanel panePerso = new JPanel();
-        panePerso.setBackground(Color.BLUE);
-        
-        JPanel paneButton = new JPanel(new FlowLayout(FlowLayout.CENTER,15,200));
+
+        paneAffichage = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        paneAffichage.setBackground(Color.white);
+        paneAffichage.add(Bibliotheque.afficherStatistique());
+
+        JPanel paneButton = new JPanel(new FlowLayout(FlowLayout.CENTER,15,35));
+        paneButton.setBackground(new Color(51,104,255));
         btnBiblioTab = new JButton("Biblio tableau");
         btnBiblioLinked = new JButton("Biblio linked");
         btnBiblioPer = new JButton("Biblio Personnel");
+
+       
         paneButton.add(btnBiblioTab);
         paneButton.add(btnBiblioLinked);
         paneButton.add(btnBiblioPer);
         paneButton.add(btnQuitter);
+        //dispaly des panels
+        gc.ipadx = 1700;      
+        gc.ipady = 450;      
+        gc.weightx = 0.0;
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.gridwidth=1;
+        panePrincipal.add(paneAffichage,gc);
+
+        //c.fill = GridBagConstraints.HORIZONTAL;
+        gc.ipadx = 1500;      
+        gc.ipady = 150;      
+        gc.weightx = 0.0;
+        gc.gridx = 0;
+        gc.gridy = 1;
+        gc.gridwidth=2;
+        panePrincipal.add(paneButton,gc);
     
         add(panePrincipal);
         pack();
@@ -227,15 +254,7 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
                 System.exit(0);
         }else if(e.getSource() == btnSuprimer){   
             suprimerBilio();
-            if(biblio instanceof BiblioTab){
-                lblTimerTab.setText("Le temps est du tableau "+biblio.getExucuteTime());
-
-            }else if(biblio instanceof BiblioLink){
-                lblTimerLink.setText("Le temps est de link "+biblio.getExucuteTime());
-
-            }
-
-            
+           
         }else if(e.getSource() == livre){
             ajouterBiblio("livre");
         }else if(e.getSource() == cd){
@@ -249,13 +268,6 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-            if(biblio instanceof BiblioTab){
-                lblTimerTab.setText("Le temps est du tableau "+biblio.getExucuteTime());
-
-            }else if(biblio instanceof BiblioLink){
-                lblTimerLink.setText("Le temps est de link "+biblio.getExucuteTime());
-
-            }
 
         }else if(e.getSource() == btnBiblioPer){
 //            ajouterBiblio("periodique");
@@ -266,19 +278,9 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-            if(biblio instanceof BiblioTab){
-                lblTimerTab.setText("Le temps est du tableau "+biblio.getExucuteTime());
-
-            }else if(biblio instanceof BiblioLink){
-                lblTimerLink.setText("Le temps est de link "+biblio.getExucuteTime());
-
-            }
 
         }else if(e.getSource() == btnMenu){
             try {
-                
-                //lblTimerTab.setText("le temps de tableau est  0");
-                //lblTimerLink.setText("le temps de link est  0");                
                 biblio.sauvegarder();
                 gBibliotheque = new GestionBibliotheque();
             } catch (IOException e1) {

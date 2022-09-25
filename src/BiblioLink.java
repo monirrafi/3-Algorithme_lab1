@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ public class BiblioLink extends Bibliotheque{
 /*============================================================================================================ */
     final static String FICHIER_TXT = "src\\Biblio.txt";
     final static String FICHIER_LINKED_OBJ = "src\\BiblioLinked.obj";
+    final static String FICHIER_STATISTIQUE_OBJ = "src\\statistiques.obj";
     static BufferedReader tmpBiblio;
     static ObjectOutputStream tmpWriteObj;
     static ObjectInputStream tmpReadObj;
@@ -20,7 +22,9 @@ public class BiblioLink extends Bibliotheque{
 /*============================================================================================================ */
     
     private LinkedList<Ouvrage> linkBiblio = new LinkedList<Ouvrage>();
-    //private int taille=0;
+    private ArrayList<Long> suprimeTime = new ArrayList<>();
+    private ArrayList<Long> ajoutTime = new ArrayList<>();
+    private ArrayList<Long> rechercheTime = new ArrayList<>();
     public BiblioLink() throws Exception {
         this.linkBiblio = charger();
     }
@@ -115,12 +119,35 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
 		} finally {// Exécuté si erreur ou pas
 			tmpWriteObj.close();
 		}
+        try {
+            HashMap<String,Double> statistiqueMap = new HashMap<>();
+            double moySuprime = supMoyenne(suprimeTime);
+            double moyAjout = supMoyenne(ajoutTime);
+            double moyRecherche = supMoyenne(rechercheTime);
+            statistiqueMap.put("suprime_Linked", moySuprime);
+            statistiqueMap.put("ajout_Linked", moyAjout);
+            statistiqueMap.put("recherche_Linked", moyRecherche);
+            super.setStatistiqueMap(statistiqueMap);
+
+			tmpWriteObj = new ObjectOutputStream(new FileOutputStream(FICHIER_STATISTIQUE_OBJ));
+			tmpWriteObj.writeObject(super.getStatistiqueMap());
+		} catch (FileNotFoundException e) {
+			System.out.println("Fichier introuvable. Vérifiez le chemin et nom du fichier.");
+		} catch (IOException e) {
+			System.out.println("Un probléme est arrivé lors de la manipulation du fichier. V�rifiez vos donn�es.");
+		} catch (Exception e) {
+			System.out.println("Un probléme est arrivé lors du chargement du fichier. Contactez l'administrateur.");
+		} finally {// Exécuté si erreur ou pas
+			tmpWriteObj.close();
+		}
+
 	}
 /*============================================================================================================ */
 /*=========================================== SAR SAR SAR ===================================================== */
 /*============================================================================================================ */
     @Override
     public boolean Rechercher(int cote) {
+        long startTime = System.nanoTime();
         boolean cond =false;
             for(int i=0;i<linkBiblio.size();i++){
                 if(linkBiblio.get(i).getCote()==cote){
@@ -129,11 +156,15 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
                 }
 
             }
+        long stopTime = System.nanoTime();
+        rechercheTime.add(stopTime-startTime);
         return cond;
+
     }
 
     @Override
     public void Ajouter(String typeListe) {
+        long startTime = System.nanoTime();
         int cote=0;
         int cond =0;
         String strCote = JOptionPane.showInputDialog(null, "Entrez le numero cote");
@@ -212,12 +243,15 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
                     linkBiblio.add(new Periodique(cote,date,auteur,numero,periodicite));
                 }    
                         
-                //this.setlinkBiblio(tabTemp);
+                         //this.setlinkBiblio(tabTemp);
                 //this.setTaille(taille+1);
                         
             }
             
         }
+        long stopTime = System.nanoTime();
+        ajoutTime.add(stopTime-startTime);
+
     }
     @Override
     public void Suprimer(int cote) {
@@ -231,7 +265,7 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
             }
         }
         long stopTime =System.nanoTime();
-        super.setExucuteTime(stopTime-startTime);
+        suprimeTime.add(stopTime-startTime);
 
        // this.setlinkBiblio(tabTemp);
         //this.setTaille(taille-1);
@@ -240,7 +274,7 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
     }
     @Override
     public String toString() {
-        long startTime = System.nanoTime();
+        //long startTime = System.nanoTime();
         
         String strLivre="";
         String strPeriodique="";
@@ -260,8 +294,8 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
         retour+= "\n  Les Livres\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Auteur",15)+ Ouvrage.envollopeMot("\ttitre",15) + Ouvrage.envollopeMot("\tEditeur",15)+"\n"+ strLivre;
         retour+= "\n  Les periodiques\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Nom",15)+"\tNumero\tPeriodicite\n"+ strPeriodique;
         retour+= "\n  Les CD\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Titre",15)+ Ouvrage.envollopeMot("\tAuteur",15)+"\n"+ strCD;
-        long stopTime =System.nanoTime();
-        super.setExucuteTime(stopTime-startTime);
+       // long stopTime =System.nanoTime();
+        //super.setExucuteTime(stopTime-startTime);
         return retour;
     }
     public LinkedList<Ouvrage> getLinkBiblio() {
