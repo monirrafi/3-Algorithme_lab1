@@ -49,7 +49,7 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
             System.out.println(e.getMessage());
 		}catch(Exception e)
 		{
-			System.out.println("Un probléme est arrivé lors du chargement du fichier. Contactez l'administrateur.");
+			System.out.println("Un probléme est arrivé lors du chargement du fichier charge Link. Contactez l'administrateur.");
 		}finally
 		{// Exécuté si erreur ou pas
 			tmpReadObj.close();
@@ -115,27 +115,11 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
 		} catch (IOException e) {
 			System.out.println("Un probléme est arrivé lors de la manipulation du fichier. V�rifiez vos donn�es.");
 		} catch (Exception e) {
-			System.out.println("Un probléme est arrivé lors du chargement du fichier. Contactez l'administrateur.");
+			System.out.println("Un probléme est arrivé lors du chargement du fichier saugarde Link. Contactez l'administrateur.");
 		} finally {// Exécuté si erreur ou pas
 			tmpWriteObj.close();
 		}
         try {
-            HashMap<String,Double> statistiqueMap = new HashMap<>();
-            double moySuprime = supMoyenne(suprimeTime);
-            double moyAjout = supMoyenne(ajoutTime);
-            double moyRecherche = supMoyenne(rechercheTime);
-            statistiqueMap.put("suprime_Linked", moySuprime);
-            statistiqueMap.put("ajout_Linked", moyAjout);
-            statistiqueMap.put("recherche_Linked", moyRecherche);
-            statistiqueMap.put("suprime_Tableau", 0.0);
-            statistiqueMap.put("ajout_Tableau", 0.0);
-            statistiqueMap.put("recherche_Tableau", 0.0);
-
-            super.setStatistiqueMap(statistiqueMap);
-            for(String str:super.getStatistiqueMap().keySet()){
-                System.out.println(str+"\t"+super.getStatistiqueMap().get(str));
-            }
-
 			tmpWriteObj = new ObjectOutputStream(new FileOutputStream(FICHIER_STATISTIQUE_OBJ));
 			tmpWriteObj.writeObject(super.getStatistiqueMap());
 		} catch (FileNotFoundException e) {
@@ -149,6 +133,45 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
 		}
 
 	}
+    public void remplirMap() {
+        HashMap<Integer,ArrayList<Long>> statistiqueMap = new HashMap<>();
+        statistiqueMap= getStatistiqueMap();
+        //ArrayList<Long> lst1 = new ArrayList<Long>(){{add((long) 0);}};
+        //statistiqueMap.put(1,lst1);
+        //double moySuprime = supMoyenne(suprimeTime);
+        //double moyAjout = supMoyenne(ajoutTime);
+        long moyRecherche = supMoyenne(rechercheTime);
+        for(int i=0;i<suprimeTime.size();i++){
+            ArrayList<Long> lst = statistiqueMap.get(i+1);
+            lst.add(suprimeTime.get(i));
+            statistiqueMap.put(i+1, lst);
+
+        }
+        for(int i=0;i<ajoutTime.size();i++){
+            ArrayList<Long> lst = statistiqueMap.get(i+1);
+            lst.add(ajoutTime.get(i));
+            statistiqueMap.put(i+1, lst);
+
+        }
+        for(int i=0;i<1;i++){
+            ArrayList<Long> lst = statistiqueMap.get(i+1);
+            lst.add(moyRecherche);
+            statistiqueMap.put(i+1, lst);
+
+        }
+/*            statistiqueMap.put("ajout_Tableau", moyAjout);
+        statistiqueMap.put("recherche_Tableau", moyRecherche);
+        statistiqueMap.put("suprime_Linked", 0.0);
+        statistiqueMap.put("ajout_Linked", 0.0);
+        statistiqueMap.put("recherche_Linked", 0.0);
+*/
+        super.setStatistiqueMap(statistiqueMap);
+        for(Integer essai:super.getStatistiqueMap().keySet()){
+            System.out.println(essai+"\t"+super.getStatistiqueMap().get(essai));
+        }
+        
+    }
+
 /*============================================================================================================ */
 /*=========================================== SAR SAR SAR ===================================================== */
 /*============================================================================================================ */

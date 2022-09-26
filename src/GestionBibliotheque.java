@@ -10,8 +10,10 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
     static GestionBibliotheque gBibliotheque;
     private Bibliotheque biblio;
     private String txtSortie="";
+    private String txtSortieMenu="";
     //private JTextArea sortie = new JTextArea(5,120);
     private JTextPane sortie = new JTextPane();
+    private JTextArea sortieMenu = new JTextArea();
 
     //static JButton btnAjouter = new JButton("Ajouter");
     static JButton btnSuprimer= new JButton("Suprimer");
@@ -20,6 +22,7 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
     static JButton btnBiblioTab = new JButton("Biblio tableau");
     static JButton btnBiblioLinked = new JButton("Biblio linked");
     static JButton btnBiblioPer = new JButton("Biblio Personnel");
+    static JButton btnMAJ = new JButton("Mise a jour ");
     static JTextPane paneStatistiques;
     
     static JLabel lblTimerTab = new JLabel("le temps de tableau est  0");
@@ -79,7 +82,6 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         try {
             Bibliotheque.chargerMap();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         setTitle("Bibliotheque");
@@ -90,7 +92,17 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
 
         paneAffichage = new JPanel(new FlowLayout(FlowLayout.LEFT));
         paneAffichage.setBackground(Color.white);
-        paneAffichage.add(Bibliotheque.afficherStatistique());
+        //sortieMenu = new JTextArea();
+        //txtSortieMenu = "";
+        txtSortieMenu = sortieMenu.getText();
+        sortieMenu = new JTextArea();
+        sortieMenu.setSize(new Dimension(5,300));
+        sortieMenu.append(Bibliotheque.cadrerMot("suprime_Tableau",20)+Bibliotheque.cadrerMot("ajout_Tableau",20)
+            +Bibliotheque.cadrerMot("recherche_Tableau",20)+Bibliotheque.cadrerMot("suprime_Linked",20)+
+            Bibliotheque.cadrerMot("ajout_Linked",20)+Bibliotheque.cadrerMot("recherche_Linked",20) + "\n");
+        sortieMenu.append(txtSortieMenu);
+        sortieMenu.append(Bibliotheque.afficherStatistique());
+        paneAffichage.add(sortieMenu);
 
         JPanel paneButton = new JPanel(new FlowLayout(FlowLayout.CENTER,15,35));
         paneButton.setBackground(new Color(51,104,255));
@@ -98,7 +110,7 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         btnBiblioLinked = new JButton("Biblio linked");
         btnBiblioPer = new JButton("Biblio Personnel");
 
-       
+        paneButton.add(btnMAJ);
         paneButton.add(btnBiblioTab);
         paneButton.add(btnBiblioLinked);
         paneButton.add(btnBiblioPer);
@@ -287,7 +299,26 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
                 e1.printStackTrace();
             }
 
-        }
+        }else if(e.getSource() == btnMAJ){
+            if(biblio instanceof BiblioTab){
+                ((BiblioTab) biblio).remplirMap();
+
+            }else if(biblio instanceof BiblioLink){
+                ((BiblioLink) biblio).remplirMap();
+
+            }
+            txtSortieMenu = sortieMenu.getText();
+            sortieMenu = new JTextArea();
+            sortieMenu.setSize(new Dimension(5,300));
+            sortieMenu.append(Bibliotheque.cadrerMot("suprime_Tableau",20)+Bibliotheque.cadrerMot("ajout_Tableau",20)
+                +Bibliotheque.cadrerMot("recherche_Tableau",20)+Bibliotheque.cadrerMot("suprime_Linked",20)+
+                Bibliotheque.cadrerMot("ajout_Linked",20)+Bibliotheque.cadrerMot("recherche_Linked",20) + "\n");
+            sortieMenu.append(txtSortieMenu);
+            String str = Bibliotheque.afficherStatistique();
+            sortieMenu.append(str);
+            panePrincipal.repaint();
+    
+        }    
         
     }
 
@@ -319,6 +350,8 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         periodique.addActionListener(this::actionBouton);
         btnMenu.addActionListener(this::actionBouton);
         btnSuprimer.addActionListener(this::actionBouton);
+        btnMAJ.addActionListener(this::actionBouton);
+        
         
     }
 
