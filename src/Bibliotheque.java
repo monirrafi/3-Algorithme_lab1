@@ -17,7 +17,7 @@ public abstract class Bibliotheque implements Serializable{
     final static String FICHIER_STATISTIQUE_OBJ = "src\\statistiques.obj";
 
     static HashMap<String,Double> statistiqueMap = new HashMap<>();
-    static JTextPane pane = new JTextPane();
+    static JTextArea pane = new JTextArea();
     
     public abstract void Ajouter(String typeListe);
     public abstract void Suprimer(int cote);
@@ -37,43 +37,39 @@ public abstract class Bibliotheque implements Serializable{
         return moy;
     }
 
-    public static JTextPane afficherStatistique() {
-        pane.setSize(new Dimension(5,150));
-        String pattern1="###,###.00";    // pattern according to which number will be format
+    public static JTextArea afficherStatistique() {
+        String pattern1="###,###.00";    
  
         DecimalFormat df=new DecimalFormat(pattern1);  
         String txtStatistique="";
-        //pane.setText(txtStatistique);
-//        if(statistiqueMap.size()==0){
-//            txtStatistique="ajout_Tableau\tsuprime_Tableau\trecherche_Tableau\tsuprime_Linked\tajout_Linked\t\trecherche_Linked\n";
-//        }else{    
-//            for(String str:statistiqueMap.keySet()){
-//                txtStatistique += str + "\t";
-//            }
-            txtStatistique +=   "\n";
+        
             for(String str:statistiqueMap.keySet()){
-                txtStatistique += String.valueOf(df.format(statistiqueMap.get(str))) + "\t\t";
+                txtStatistique += cadrerMot(String.valueOf(df.format(statistiqueMap.get(str))),32);
             }
             txtStatistique +=   "\n";
-//        }
-        Document doc = pane.getDocument();
-        try {
-            doc.insertString(doc.getLength(), txtStatistique, null);
-        } catch (BadLocationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        //pane.setText(pane.getText() + txtStatistique);
+        pane.append(txtStatistique);    
         return pane;
     }
+    public static String cadrerMot(String mot,int max) {
+        String retour;
+        int lng = mot.length();
+        if(lng>=max){
+            retour = mot.substring(0, max);
+        }else{
+            retour = mot;
+            for(int i=0;i<max-lng;i++){
+                retour += " ";
+            }
+        }
+        return retour;        
+    }
     public static void chargerMap() throws Exception {
-        statistiqueMap.put("suprime_Tableau", 0.0);
-        statistiqueMap.put("ajout_Tableau", 0.0);
-        statistiqueMap.put("recherche_Tableau", 0.0);
-        statistiqueMap.put("suprime_Linked", 0.0);
-        statistiqueMap.put("ajout_Linked", 0.0);
-        statistiqueMap.put("recherche_Linked", 0.0);
-
+        if(statistiqueMap.size()==0){
+            pane.setSize(new Dimension(5,300));
+            pane.append(cadrerMot("ajout_Tableau",20)+cadrerMot("suprime_Linked",20)
+            +cadrerMot("recherche_Linked",20)+cadrerMot("suprime_Tableau",20)+
+            cadrerMot("ajout_Linked",20)+cadrerMot("recherche_Tableau",20) + "\n");
+        }else{        
         
 		try {
 			tmpReadObj = new ObjectInputStream (new FileInputStream (FICHIER_STATISTIQUE_OBJ));
@@ -91,6 +87,7 @@ public abstract class Bibliotheque implements Serializable{
 		{// Exécuté si erreur ou pas
 			tmpReadObj.close();
 		}
+    }
         //return statistiquesMap;
 	}
     public static HashMap<String, Double> getStatistiqueMap() {

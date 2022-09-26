@@ -127,7 +127,14 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
             statistiqueMap.put("suprime_Linked", moySuprime);
             statistiqueMap.put("ajout_Linked", moyAjout);
             statistiqueMap.put("recherche_Linked", moyRecherche);
+            statistiqueMap.put("suprime_Tableau", 0.0);
+            statistiqueMap.put("ajout_Tableau", 0.0);
+            statistiqueMap.put("recherche_Tableau", 0.0);
+
             super.setStatistiqueMap(statistiqueMap);
+            for(String str:super.getStatistiqueMap().keySet()){
+                System.out.println(str+"\t"+super.getStatistiqueMap().get(str));
+            }
 
 			tmpWriteObj = new ObjectOutputStream(new FileOutputStream(FICHIER_STATISTIQUE_OBJ));
 			tmpWriteObj.writeObject(super.getStatistiqueMap());

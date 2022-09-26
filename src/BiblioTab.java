@@ -14,7 +14,7 @@ public class BiblioTab extends Bibliotheque{
 
     final static int MAX =20;
     final static String FICHIER_TXT = "src\\Biblio.txt";
-    final static String FICHIER_OBJ = "src\\BiblioTab.obj";
+    final static String FICHIER_TAB_OBJ = "src\\BiblioTab.obj";
     final static String FICHIER_STATISTIQUE_OBJ = "src\\statistiques.obj";
     static BufferedReader tmpBiblio;
     static ObjectOutputStream tmpWriteObj;
@@ -41,7 +41,7 @@ public class BiblioTab extends Bibliotheque{
 /*============================================================================================================ */
 public Ouvrage[] chargerObj() throws Exception {
 		try {
-			tmpReadObj = new ObjectInputStream (new FileInputStream (FICHIER_OBJ));
+			tmpReadObj = new ObjectInputStream (new FileInputStream (FICHIER_TAB_OBJ));
 			tabBiblio = (Ouvrage[]) tmpReadObj.readObject();
             this.setTaille(tabBiblio.length);
     
@@ -98,7 +98,7 @@ public Ouvrage[] chargerObj() throws Exception {
 
     public Ouvrage[] charger() throws Exception {
         
-        File file = new File(FICHIER_OBJ);
+        File file = new File(FICHIER_TAB_OBJ);
         if(file.exists()){
             return chargerObj();
         }else{
@@ -112,7 +112,7 @@ public Ouvrage[] chargerObj() throws Exception {
 
     public void sauvegarder() throws IOException {
 		try {
-			tmpWriteObj = new ObjectOutputStream(new FileOutputStream(FICHIER_OBJ));
+			tmpWriteObj = new ObjectOutputStream(new FileOutputStream(FICHIER_TAB_OBJ));
 			tmpWriteObj.writeObject(tabBiblio);
 		} catch (FileNotFoundException e) {
 			System.out.println("Fichier introuvable. Vérifiez le chemin et nom du fichier.");
@@ -131,7 +131,14 @@ public Ouvrage[] chargerObj() throws Exception {
             statistiqueMap.put("suprime_Tableau", moySuprime);
             statistiqueMap.put("ajout_Tableau", moyAjout);
             statistiqueMap.put("recherche_Tableau", moyRecherche);
+            statistiqueMap.put("suprime_Linked", 0.0);
+            statistiqueMap.put("ajout_Linked", 0.0);
+            statistiqueMap.put("recherche_Linked", 0.0);
+
             super.setStatistiqueMap(statistiqueMap);
+            for(String str:super.getStatistiqueMap().keySet()){
+                System.out.println(str+"\t"+super.getStatistiqueMap().get(str));
+            }
 			tmpWriteObj = new ObjectOutputStream(new FileOutputStream(FICHIER_STATISTIQUE_OBJ));
 			tmpWriteObj.writeObject(super.getStatistiqueMap());
 		} catch (FileNotFoundException e) {
