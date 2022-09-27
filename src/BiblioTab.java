@@ -162,6 +162,10 @@ public Ouvrage[] chargerObj() throws Exception {
     @Override
     public void Ajouter(String typeListe) {
         long startTime = System.nanoTime();
+        if(getTaille()>=MAX){
+            JOptionPane.showMessageDialog(null, "la tableau est pleine");
+        }else{
+
         int cote= getTaille()+1;
         if(cote != 0){   
             String date="";
@@ -232,7 +236,7 @@ public Ouvrage[] chargerObj() throws Exception {
         long stopTime = System.nanoTime();
         int size = getStatistiqueMap().size();
         Long[] lst = new Long[9];
-        lst[3]= stopTime-startTime;
+        lst[3]= (stopTime-startTime)/1000000;
         if(size ==0){
             getStatistiqueMap().put(1,lst);
 
@@ -241,7 +245,7 @@ public Ouvrage[] chargerObj() throws Exception {
             getStatistiqueMap().put(size+1,lst);
 
         }
- 
+    }
     }
     @Override
     public void Suprimer(int cote) {

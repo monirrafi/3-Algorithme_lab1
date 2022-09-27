@@ -54,6 +54,7 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         txtSortie = "";
         txtSortie = biblio.toString();
         sortie = new JTextPane();
+
         sortie.setSize(new Dimension(5,120));
         changerEntete(sortie, txtSortie.substring(0,txtSortie.indexOf("\n")), Color.YELLOW);
         changerEntete(sortie, txtSortie.substring(txtSortie.indexOf("\n")), Color.WHITE);
@@ -73,7 +74,7 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
     }
     public void menu(){
         setTitle("Bibliotheque");
-        setPreferredSize(new Dimension(800,500));
+        setPreferredSize(new Dimension(800,700));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panePrincipal = new JPanel(new FlowLayout(FlowLayout.CENTER,50,150));
         JPanel paneButton = new JPanel(new FlowLayout(FlowLayout.LEFT,15,35));
@@ -98,10 +99,10 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
     }
     public void afficher(){
         setTitle("Bibliotheque");
-        setPreferredSize(new Dimension(800,500));
+        setPreferredSize(new Dimension(800,700));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         GridBagConstraints c = new GridBagConstraints();
-
+        
         panePrincipal = new JPanel(new GridBagLayout());
         paneAffichage = new JPanel(new FlowLayout(FlowLayout.LEFT));
         paneAffichage.setBackground(Color.white);

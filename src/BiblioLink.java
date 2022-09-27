@@ -264,7 +264,7 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
             
         }
         long stopTime = System.nanoTime();
-        chargerStatistiqueMap(4, stopTime-startTime);
+        chargerStatistiqueMap(4,(stopTime-startTime)/1000000);
 
     }
     @Override
