@@ -1,7 +1,7 @@
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.awt.Dimension;
+
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
@@ -12,10 +12,10 @@ public abstract class Bibliotheque implements Serializable{
     static ObjectOutputStream tmpWriteObj;
     static ObjectInputStream tmpReadObj;
     final static String FICHIER_STATISTIQUE_OBJ = "src\\statistiques.obj";
-
-    static HashMap<Integer,ArrayList<Long>> statistiqueMap = new HashMap<>();
-        
- 
+    static ArrayList<Long> initialListe = new ArrayList<>(){{add((long) 0);}};
+    static ArrayList<ArrayList<Long>> statistiqueMap = new ArrayList<>(){{add(initialListe);}};
+    
+    
     //static HashMap<Integer,ArrayList<Double>> statistiqueAjoutMap = new HashMap<>();
     //static HashMap<Integer,ArrayList<Double>> statistiqueRechercheMap = new HashMap<>();
     static JTextArea pane = new JTextArea();
@@ -44,10 +44,10 @@ public abstract class Bibliotheque implements Serializable{
         DecimalFormat df=new DecimalFormat(pattern1);  
         String txtStatistique="";
         
-            for(Integer essai:statistiqueMap.keySet()){
-                ArrayList<Long> lst = statistiqueMap.get(essai);
-                for(int i=0;i<lst.size();i++){
-                    txtStatistique += cadrerMot(String.valueOf(df.format(lst.get(i))),32);
+            for(ArrayList<Long> essai:statistiqueMap){
+                
+                for(int i=0;i<essai.size();i++){
+                    txtStatistique += cadrerMot(String.valueOf(df.format(essai.get(i))),32);
 
                 }
             }
@@ -68,20 +68,41 @@ public abstract class Bibliotheque implements Serializable{
         }
         return retour;        
     }
+    public static void maj() {
+//                ArrayList<ArrayList<Long>> listBibliotheque = Bibliotheque.getStatistiqueMap();
+                ArrayList<Long> listBiblio = new ArrayList<>();
+                for(Long temps:BiblioTab.getListTab()){
+                    listBiblio.add(temps);
+                    
+                }
+               for(Long temps:BiblioLink.getListTab()){
+                    listBiblio.add(temps);
+                    //System.out.println(temps);
+                }
+                statistiqueMap.add(listBiblio);
+                for(ArrayList<Long> lst:statistiqueMap){
+                        System.out.println(lst);
+        
+                }
+        
+        
+                
+            }
+        
     public static void chargerMap() throws Exception {
-        if(statistiqueMap.size()==0){
+    /*    if(statistiqueMap.size()==0){
             ArrayList<Long> lst1 = new ArrayList<Long>(){{add((long) 0);}};
             statistiqueMap.put(1,lst1) ;           
-    /*
+    
             pane.setSize(new Dimension(5,300));
             pane.append(cadrerMot("suprime_Tableau",20)+cadrerMot("ajout_Tableau",20)
             +cadrerMot("recherche_Tableau",20)+cadrerMot("suprime_Linked",20)+
-            cadrerMot("ajout_Linked",20)+cadrerMot("recherche_Linked",20) + "\n");*/
-        }else{        
+            cadrerMot("ajout_Linked",20)+cadrerMot("recherche_Linked",20) + "\n");
+        }else{     */   
         
 		try {
 			tmpReadObj = new ObjectInputStream (new FileInputStream (FICHIER_STATISTIQUE_OBJ));
-			statistiqueMap = (HashMap<Integer,ArrayList<Long>>) tmpReadObj.readObject();
+			statistiqueMap = (ArrayList<ArrayList<Long>>) tmpReadObj.readObject();
  		}catch(FileNotFoundException e)
 		{
 			System.out.println("Fichier introuvable. Vérifiez le chemin et nom du fichier.");
@@ -97,17 +118,17 @@ public abstract class Bibliotheque implements Serializable{
 		}
     }
         //return statistiquesMap;
-	}
+	
 
-    public static HashMap<Integer, ArrayList<Long>> getStatistiqueMap() {
+    public static ArrayList<ArrayList<Long>> getStatistiqueMap() {
         return statistiqueMap;
     }
-    public static void setStatistiqueMap(HashMap<Integer, ArrayList<Long>> statistiquesMap) {
-        for(Integer essai:statistiquesMap.keySet()){
-            statistiqueMap.put(essai,statistiquesMap.get(essai));
+    public static void setStatistiqueMap(ArrayList<ArrayList<Long>> statistiquesMap) {
+//        for(Integer essai:statistiquesMap.keySet()){
+//            statistiqueMap.put(essai,statistiquesMap.get(essai));
 
-        }
-       // statistiqueMap = statistiquesMap;
+ //       }
+       statistiqueMap = statistiquesMap;
     }
     
     

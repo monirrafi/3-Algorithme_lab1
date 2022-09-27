@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.*;
 import java.awt.event.*;
@@ -300,13 +301,8 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
             }
 
         }else if(e.getSource() == btnMAJ){
-            if(biblio instanceof BiblioTab){
-                ((BiblioTab) biblio).remplirMap();
 
-            }else if(biblio instanceof BiblioLink){
-                ((BiblioLink) biblio).remplirMap();
-
-            }
+            Bibliotheque.maj();
             txtSortieMenu = sortieMenu.getText();
             sortieMenu = new JTextArea();
             sortieMenu.setSize(new Dimension(5,300));

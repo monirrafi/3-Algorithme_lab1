@@ -1,6 +1,4 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,16 +17,17 @@ public class BiblioTab extends Bibliotheque{
     static BufferedReader tmpBiblio;
     static ObjectOutputStream tmpWriteObj;
     static ObjectInputStream tmpReadObj;
-    static long exucuteTime;
+  
 /*============================================================================================================ */
 /*=========================================== Constructeur ===================================================== */
 /*============================================================================================================ */
     
     private Ouvrage[] tabBiblio = new Ouvrage[MAX];
     private int taille=0;
-    private ArrayList<Long> suprimeTime = new ArrayList<>();
-    private ArrayList<Long> ajoutTime =new ArrayList<>();
-    private ArrayList<Long> rechercheTime = new ArrayList<>();
+    private static long suprimeTime =0;
+    private static long ajoutTime =0;
+    private static ArrayList<Long> listTime = new ArrayList<>();
+    private static ArrayList<Long> rechercheTime = new ArrayList<>();
 
     public BiblioTab() throws Exception {
         this.tabBiblio = charger();
@@ -137,34 +136,13 @@ public Ouvrage[] chargerObj() throws Exception {
 			tmpWriteObj.close();
 		}
 	}
-    public void remplirMap() {
-        HashMap<Integer,ArrayList<Long>> statistiqueMap = new HashMap<>();
-        statistiqueMap= getStatistiqueMap();
+    public static ArrayList<Long> getListTab() {
         long moyRecherche = supMoyenne(rechercheTime);
-
-        for(int i=0;i<suprimeTime.size();i++){
-            ArrayList<Long> lst = statistiqueMap.get(i+1);
-            lst.add(suprimeTime.get(i));
-            statistiqueMap.put(i+1, lst);
-
-        }
-        for(int i=0;i<ajoutTime.size();i++){
-            ArrayList<Long> lst = statistiqueMap.get(i+1);
-            lst.add(ajoutTime.get(i));
-            statistiqueMap.put(i+1, lst);
-
-        }
-        for(int i=0;i<1;i++){
-            ArrayList<Long> lst = statistiqueMap.get(i+1);
-            lst.add(moyRecherche);
-            statistiqueMap.put(i+1, lst);
-
-        }
-        super.setStatistiqueMap(statistiqueMap);
-        for(Integer essai:super.getStatistiqueMap().keySet()){
-            System.out.println(essai+"\t"+super.getStatistiqueMap().get(essai));
-        }
-        
+        listTime.add(suprimeTime);
+        listTime.add(ajoutTime);
+        listTime.add(moyRecherche);
+        return listTime;
+       
     }
 /*============================================================================================================ */
 /*=========================================== SAR SAR SAR ===================================================== */
@@ -279,7 +257,7 @@ public Ouvrage[] chargerObj() throws Exception {
             
         }
         long stopTime = System.nanoTime();
-        ajoutTime.add(stopTime-startTime);
+        ajoutTime =  stopTime-startTime;
     }
     @Override
     public void Suprimer(int cote) {
@@ -305,7 +283,7 @@ public Ouvrage[] chargerObj() throws Exception {
             }
         }  
         long stopTime =System.nanoTime();
-        suprimeTime.add(stopTime-startTime);
+        suprimeTime = stopTime-startTime;
         this.setTabBiblio(tabTemp);
         this.setTaille(taille-1);
 
@@ -348,10 +326,6 @@ public Ouvrage[] chargerObj() throws Exception {
     }
     public void setTaille(int taille) {
         this.taille = taille;
-    }
-    public long getTime() {
-        return exucuteTime;
-        
     }
 
 }

@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.*;
@@ -16,15 +15,16 @@ public class BiblioLink extends Bibliotheque{
     static BufferedReader tmpBiblio;
     static ObjectOutputStream tmpWriteObj;
     static ObjectInputStream tmpReadObj;
-    static long exucuteTime;
+
 /*============================================================================================================ */
 /*=========================================== Constructeur ===================================================== */
 /*============================================================================================================ */
     
     private LinkedList<Ouvrage> linkBiblio = new LinkedList<Ouvrage>();
-    private ArrayList<Long> suprimeTime = new ArrayList<>();
-    private ArrayList<Long> ajoutTime = new ArrayList<>();
-    private ArrayList<Long> rechercheTime = new ArrayList<>();
+    private static long suprimeTime =0;
+    private static long ajoutTime =0;
+    private static ArrayList<Long> listTime = new ArrayList<>();
+    private static ArrayList<Long> rechercheTime = new ArrayList<>();
     public BiblioLink() throws Exception {
         this.linkBiblio = charger();
     }
@@ -133,43 +133,13 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
 		}
 
 	}
-    public void remplirMap() {
-        HashMap<Integer,ArrayList<Long>> statistiqueMap = new HashMap<>();
-        statistiqueMap= getStatistiqueMap();
-        //ArrayList<Long> lst1 = new ArrayList<Long>(){{add((long) 0);}};
-        //statistiqueMap.put(1,lst1);
-        //double moySuprime = supMoyenne(suprimeTime);
-        //double moyAjout = supMoyenne(ajoutTime);
+    public static ArrayList<Long> getListTab() {
         long moyRecherche = supMoyenne(rechercheTime);
-        for(int i=0;i<suprimeTime.size();i++){
-            ArrayList<Long> lst = statistiqueMap.get(i+1);
-            lst.add(suprimeTime.get(i));
-            statistiqueMap.put(i+1, lst);
-
-        }
-        for(int i=0;i<ajoutTime.size();i++){
-            ArrayList<Long> lst = statistiqueMap.get(i+1);
-            lst.add(ajoutTime.get(i));
-            statistiqueMap.put(i+1, lst);
-
-        }
-        for(int i=0;i<1;i++){
-            ArrayList<Long> lst = statistiqueMap.get(i+1);
-            lst.add(moyRecherche);
-            statistiqueMap.put(i+1, lst);
-
-        }
-/*            statistiqueMap.put("ajout_Tableau", moyAjout);
-        statistiqueMap.put("recherche_Tableau", moyRecherche);
-        statistiqueMap.put("suprime_Linked", 0.0);
-        statistiqueMap.put("ajout_Linked", 0.0);
-        statistiqueMap.put("recherche_Linked", 0.0);
-*/
-        super.setStatistiqueMap(statistiqueMap);
-        for(Integer essai:super.getStatistiqueMap().keySet()){
-            System.out.println(essai+"\t"+super.getStatistiqueMap().get(essai));
-        }
-        
+        listTime.add(suprimeTime);
+        listTime.add(ajoutTime);
+        listTime.add(moyRecherche);
+        return listTime;
+       
     }
 
 /*============================================================================================================ */
@@ -280,7 +250,7 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
             
         }
         long stopTime = System.nanoTime();
-        ajoutTime.add(stopTime-startTime);
+        ajoutTime = stopTime-startTime;
 
     }
     @Override
@@ -295,7 +265,7 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
             }
         }
         long stopTime =System.nanoTime();
-        suprimeTime.add(stopTime-startTime);
+        suprimeTime = stopTime-startTime;
 
        // this.setlinkBiblio(tabTemp);
         //this.setTaille(taille-1);
@@ -333,11 +303,6 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
     }
     public void setLinkBiblio(LinkedList<Ouvrage> linkBiblio) {
         this.linkBiblio = linkBiblio;
-    }
-    
-    public long getTime() {
-        return exucuteTime;
-        
     }
 
 }
