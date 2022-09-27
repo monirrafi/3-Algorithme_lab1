@@ -12,8 +12,8 @@ public abstract class Bibliotheque implements Serializable{
     static ObjectOutputStream tmpWriteObj;
     static ObjectInputStream tmpReadObj;
     final static String FICHIER_STATISTIQUE_OBJ = "src\\statistiques.obj";
-    static ArrayList<Long> initialListe = new ArrayList<>(){{add((long) 0);}};
-    static ArrayList<ArrayList<Long>> statistiqueMap = new ArrayList<>(){{add(initialListe);}};
+    //static ArrayList<Long> initialListe = new ArrayList<>(){{add((long) 0);}};
+    private static HashMap<Integer,Long[]> statistiqueMap = new HashMap<>();
     
     
     //static HashMap<Integer,ArrayList<Double>> statistiqueAjoutMap = new HashMap<>();
@@ -38,23 +38,24 @@ public abstract class Bibliotheque implements Serializable{
         return moy;
     }
 
-    public static String afficherStatistique() {
-        String pattern1="###,###.00";    
- 
-        DecimalFormat df=new DecimalFormat(pattern1);  
-        String txtStatistique="";
-        
-            for(ArrayList<Long> essai:statistiqueMap){
-                
-                for(int i=0;i<essai.size();i++){
-                    txtStatistique += cadrerMot(String.valueOf(df.format(essai.get(i))),32);
-
-                }
+    public static void afficherStatistique() {
+        try {
+            chargerMap();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        JTextArea pane = new JTextArea(5,70);
+        pane.append("Essai\tSup_Tab\tSup_Link\tSup_Perso\tAjt_Tab\tAjt_Link\tAjt_Perso\tRec_Tab\tRec_Link\tRec_Perso\n");
+        for(Integer i:getStatistiqueMap().keySet()){
+            pane.append(i+"\t");
+            for(Long l:getStatistiqueMap().get(i)){
+                pane.append(String.valueOf(l)+"\t");
             }
-        return    txtStatistique +=   "\n";
-        //pane.append(txtStatistique);    
-        //return pane;
-    }
+            pane.append("\n");
+        }
+        JOptionPane.showMessageDialog(null, pane);
+     }
     public static String cadrerMot(String mot,int max) {
         String retour;
         int lng = mot.length();
@@ -68,41 +69,31 @@ public abstract class Bibliotheque implements Serializable{
         }
         return retour;        
     }
-    public static void maj() {
-//                ArrayList<ArrayList<Long>> listBibliotheque = Bibliotheque.getStatistiqueMap();
-                ArrayList<Long> listBiblio = new ArrayList<>();
-                for(Long temps:BiblioTab.getListTab()){
-                    listBiblio.add(temps);
-                    
-                }
-               for(Long temps:BiblioLink.getListTab()){
-                    listBiblio.add(temps);
-                    //System.out.println(temps);
-                }
-                statistiqueMap.add(listBiblio);
-                for(ArrayList<Long> lst:statistiqueMap){
-                        System.out.println(lst);
-        
-                }
-        
-        
-                
-            }
-        
-    public static void chargerMap() throws Exception {
-    /*    if(statistiqueMap.size()==0){
-            ArrayList<Long> lst1 = new ArrayList<Long>(){{add((long) 0);}};
-            statistiqueMap.put(1,lst1) ;           
+    public void chargerStatistiqueMap(int ind,long res) {
+
+        int size = getStatistiqueMap().size();
+        if(size!=0){
+        getStatistiqueMap().get(size)[ind]=res;
+        }
+    }
     
+    public static void chargerMap() throws Exception {
+/*          if(statistiqueMap.size()==0){
+            Long[] lst1 = new Long[9];
+            lst1[0]=(long) 0;
+            statistiqueMap.put(0,lst1) ;           
+  
             pane.setSize(new Dimension(5,300));
             pane.append(cadrerMot("suprime_Tableau",20)+cadrerMot("ajout_Tableau",20)
             +cadrerMot("recherche_Tableau",20)+cadrerMot("suprime_Linked",20)+
             cadrerMot("ajout_Linked",20)+cadrerMot("recherche_Linked",20) + "\n");
-        }else{     */   
-        
+        }else{        */
+            File file = new File(FICHIER_STATISTIQUE_OBJ);
+            if(file.exists()){
+    
 		try {
 			tmpReadObj = new ObjectInputStream (new FileInputStream (FICHIER_STATISTIQUE_OBJ));
-			statistiqueMap = (ArrayList<ArrayList<Long>>) tmpReadObj.readObject();
+			statistiqueMap = (HashMap<Integer,Long[]>) tmpReadObj.readObject();
  		}catch(FileNotFoundException e)
 		{
 			System.out.println("Fichier introuvable. Vérifiez le chemin et nom du fichier.");
@@ -117,17 +108,14 @@ public abstract class Bibliotheque implements Serializable{
 			tmpReadObj.close();
 		}
     }
+    }
         //return statistiquesMap;
 	
 
-    public static ArrayList<ArrayList<Long>> getStatistiqueMap() {
+    public static HashMap<Integer,Long[]> getStatistiqueMap() {
         return statistiqueMap;
     }
-    public static void setStatistiqueMap(ArrayList<ArrayList<Long>> statistiquesMap) {
-//        for(Integer essai:statistiquesMap.keySet()){
-//            statistiqueMap.put(essai,statistiquesMap.get(essai));
-
- //       }
+    public void setStatistiqueMap(HashMap<Integer,Long[]> statistiquesMap) {
        statistiqueMap = statistiquesMap;
     }
     

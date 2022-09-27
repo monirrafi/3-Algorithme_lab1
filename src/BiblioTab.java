@@ -71,14 +71,13 @@ public Ouvrage[] chargerObj() throws Exception {
             while(i<MAX && ligne != null){
                 elt = ligne.split(";");
                 if(elt[0].equalsIgnoreCase("L") ){
-                    tabBiblio[i]= new Livre(Integer.parseInt(elt[1]),elt[2],elt[3],elt[4],elt[5]);
+                    tabBiblio[i]= new Livre(i+1,elt[1],elt[2],elt[3],elt[4]);
 
                 }else if(elt[0].equalsIgnoreCase("P") ){
-                    tabBiblio[i]= new Periodique(Integer.parseInt(elt[1]),elt[2],elt[3],Integer.parseInt(elt[4]),
-                                                Integer.parseInt(elt[5]));
+                    tabBiblio[i]= new Periodique(i+1,elt[1],elt[2],Integer.parseInt(elt[3]),Integer.parseInt(elt[4]));
                     
                 }else if(elt[0].equalsIgnoreCase("C") ){
-                    tabBiblio[i]= new CDisque(Integer.parseInt(elt[1]),elt[2],elt[3],elt[4]);
+                    tabBiblio[i]= new CDisque(i+1,elt[1],elt[2],elt[3]);
                     
                 }
                     ligne = tmpBiblio.readLine();
@@ -105,6 +104,7 @@ public Ouvrage[] chargerObj() throws Exception {
         }
 
     }
+
 /*============================================================================================================ */
 /*=========================================== Sauvegarde ===================================================== */
 /*============================================================================================================ */
@@ -122,10 +122,11 @@ public Ouvrage[] chargerObj() throws Exception {
 		} finally {// Exécuté si erreur ou pas
 			tmpWriteObj.close();
 		}
+
  		try {
 
 			tmpWriteObj = new ObjectOutputStream(new FileOutputStream(FICHIER_STATISTIQUE_OBJ));
-			tmpWriteObj.writeObject(super.getStatistiqueMap());
+			tmpWriteObj.writeObject(getStatistiqueMap());
 		} catch (FileNotFoundException e) {
 			System.out.println("Fichier introuvable. Vérifiez le chemin et nom du fichier.");
 		} catch (IOException e) {
@@ -136,18 +137,12 @@ public Ouvrage[] chargerObj() throws Exception {
 			tmpWriteObj.close();
 		}
 	}
-    public static ArrayList<Long> getListTab() {
-        long moyRecherche = supMoyenne(rechercheTime);
-        listTime.add(suprimeTime);
-        listTime.add(ajoutTime);
-        listTime.add(moyRecherche);
-        return listTime;
-       
-    }
+   
 /*============================================================================================================ */
 /*=========================================== SAR SAR SAR ===================================================== */
 /*============================================================================================================ */
-    @Override
+
+     @Override
     public boolean Rechercher(int cote) {
         long startTime = System.nanoTime();
 
@@ -160,35 +155,14 @@ public Ouvrage[] chargerObj() throws Exception {
 
             }
         long stopTime = System.nanoTime();
-        rechercheTime.add(stopTime-startTime);
-            return cond;
+        chargerStatistiqueMap(6, stopTime-startTime);
+        return cond;
     }
 
     @Override
     public void Ajouter(String typeListe) {
         long startTime = System.nanoTime();
-        int cote=0;
-        int cond =0;
-        String strCote = JOptionPane.showInputDialog(null, "Entrez le numero cote");
-        if(strCote==null || strCote.equals(" ")){
-            cote=0;
-        }else{
-            cote = Integer.parseInt(strCote);
-        }
-        while(cond==0){
-
-            if(Rechercher(cote)){
-                strCote = JOptionPane.showInputDialog(null, "Le cote " + cote + " existe deja \n Entrez un autre numero cote");
-                if(strCote==null || strCote.equals(" ")){
-                    cote=0;
-                }else{
-                    cote = Integer.parseInt(strCote);
-                }
-                    }else{
-                cond=1;
-            }  
-        }
-
+        int cote= getTaille()+1;
         if(cote != 0){   
             String date="";
             String  titre="", auteur="",editeur="";
@@ -223,7 +197,6 @@ public Ouvrage[] chargerObj() throws Exception {
             }
             int res = JOptionPane.showConfirmDialog(null,gPane);
             if(res == JOptionPane.YES_OPTION){
-        //        cote = Integer.parseInt(listeJtxt.get(0).getText());
                 date = listeJtxt.get(0).getText();
                 auteur = listeJtxt.get(1).getText();
 
@@ -257,7 +230,18 @@ public Ouvrage[] chargerObj() throws Exception {
             
         }
         long stopTime = System.nanoTime();
-        ajoutTime =  stopTime-startTime;
+        int size = getStatistiqueMap().size();
+        Long[] lst = new Long[9];
+        lst[3]= stopTime-startTime;
+        if(size ==0){
+            getStatistiqueMap().put(1,lst);
+
+        }else{
+
+            getStatistiqueMap().put(size+1,lst);
+
+        }
+ 
     }
     @Override
     public void Suprimer(int cote) {
@@ -283,8 +267,8 @@ public Ouvrage[] chargerObj() throws Exception {
             }
         }  
         long stopTime =System.nanoTime();
-        suprimeTime = stopTime-startTime;
-        this.setTabBiblio(tabTemp);
+        chargerStatistiqueMap(0, stopTime-startTime);
+         this.setTabBiblio(tabTemp);
         this.setTaille(taille-1);
 
         //Lister();

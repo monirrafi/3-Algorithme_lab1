@@ -1,6 +1,4 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -11,23 +9,18 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
     static GestionBibliotheque gBibliotheque;
     private Bibliotheque biblio;
     private String txtSortie="";
-    private String txtSortieMenu="";
-    //private JTextArea sortie = new JTextArea(5,120);
     private JTextPane sortie = new JTextPane();
-    private JTextArea sortieMenu = new JTextArea();
 
-    //static JButton btnAjouter = new JButton("Ajouter");
     static JButton btnSuprimer= new JButton("Suprimer");
     static JButton btnQuitter = new JButton("Quitter");
     static JButton btnMenu= new JButton("Retour au menu");
     static JButton btnBiblioTab = new JButton("Biblio tableau");
     static JButton btnBiblioLinked = new JButton("Biblio linked");
     static JButton btnBiblioPer = new JButton("Biblio Personnel");
-    static JButton btnMAJ = new JButton("Mise a jour ");
+    static JButton btnMAJ = new JButton("Statistiques");
+    static JButton btnRechercher = new JButton("Rechercher");
     static JTextPane paneStatistiques;
     
-    static JLabel lblTimerTab = new JLabel("le temps de tableau est  0");
-    static JLabel lblTimerLink = new JLabel("le temps de link est  0");
     
     static JPanel paneAffichage = new JPanel();
     static JPanel panePrincipal = new JPanel();
@@ -70,7 +63,6 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         
         if(biblio instanceof BiblioTab){
             this.biblio = (BiblioTab) biblio;
-            //k=((BiblioTab) biblio).getTime();
         }else if(biblio instanceof BiblioLink){
             this.biblio = (BiblioLink) biblio;
         }
@@ -80,59 +72,24 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         cliquer();
     }
     public void menu(){
-        try {
-            Bibliotheque.chargerMap();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         setTitle("Bibliotheque");
-        setPreferredSize(new Dimension(1500,500));
+        setPreferredSize(new Dimension(800,500));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        panePrincipal = new JPanel(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
-
-        paneAffichage = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        paneAffichage.setBackground(Color.white);
-        //sortieMenu = new JTextArea();
-        //txtSortieMenu = "";
-        txtSortieMenu = sortieMenu.getText();
-        sortieMenu = new JTextArea();
-        sortieMenu.setSize(new Dimension(5,300));
-        sortieMenu.append(Bibliotheque.cadrerMot("suprime_Tableau",20)+Bibliotheque.cadrerMot("ajout_Tableau",20)
-            +Bibliotheque.cadrerMot("recherche_Tableau",20)+Bibliotheque.cadrerMot("suprime_Linked",20)+
-            Bibliotheque.cadrerMot("ajout_Linked",20)+Bibliotheque.cadrerMot("recherche_Linked",20) + "\n");
-        sortieMenu.append(txtSortieMenu);
-        sortieMenu.append(Bibliotheque.afficherStatistique());
-        paneAffichage.add(sortieMenu);
-
-        JPanel paneButton = new JPanel(new FlowLayout(FlowLayout.CENTER,15,35));
+        panePrincipal = new JPanel(new FlowLayout(FlowLayout.CENTER,50,150));
+        JPanel paneButton = new JPanel(new FlowLayout(FlowLayout.LEFT,15,35));
         paneButton.setBackground(new Color(51,104,255));
+        panePrincipal.setBackground(new Color(51,104,255));
         btnBiblioTab = new JButton("Biblio tableau");
         btnBiblioLinked = new JButton("Biblio linked");
         btnBiblioPer = new JButton("Biblio Personnel");
+        btnMAJ = new JButton("Statistiques");
 
         paneButton.add(btnMAJ);
         paneButton.add(btnBiblioTab);
         paneButton.add(btnBiblioLinked);
         paneButton.add(btnBiblioPer);
         paneButton.add(btnQuitter);
-        //dispaly des panels
-        gc.ipadx = 1700;      
-        gc.ipady = 450;      
-        gc.weightx = 0.0;
-        gc.gridx = 0;
-        gc.gridy = 0;
-        gc.gridwidth=1;
-        panePrincipal.add(paneAffichage,gc);
-
-        //c.fill = GridBagConstraints.HORIZONTAL;
-        gc.ipadx = 1500;      
-        gc.ipady = 150;      
-        gc.weightx = 0.0;
-        gc.gridx = 0;
-        gc.gridy = 1;
-        gc.gridwidth=2;
-        panePrincipal.add(paneButton,gc);
+        panePrincipal.add(paneButton);
     
         add(panePrincipal);
         pack();
@@ -185,12 +142,10 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         paneButton.setBackground(new Color(51,204,255));
 
         btnSuprimer = new JButton("Suprimer");
-        btnMenu = new JButton("Retour au Menu");   
-        JPanel paneTimer = new JPanel(new GridLayout(2,1));
-        paneTimer.setBackground(new Color(51,204,255));
-        paneTimer.add(lblTimerTab);     
-        paneTimer.add(lblTimerLink);     
-        paneButton.add(paneTimer);
+        btnMenu = new JButton("Retour au Menu"); 
+        btnRechercher = new JButton("Rechercher"); 
+
+        paneButton.add(btnRechercher);
         paneButton.add(paneRadio);
         paneButton.add(btnSuprimer);
         paneButton.add(btnMenu);
@@ -252,6 +207,17 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
                 }
             }
      }
+     public void rechercherBilio(){
+        String strCote = JOptionPane.showInputDialog(null,"Entrez le numero a chercher");
+        int cote = Integer.parseInt(strCote);
+        if(biblio.Rechercher(cote)){
+            JOptionPane.showMessageDialog(null,"Le numero " + cote + " existe");
+        }else{
+            JOptionPane.showMessageDialog(null,"Le numero " + cote + " n'existe pas");
+            
+        }
+     }
+
     public void ajouterBiblio(String typeOuvrage) {
         
             biblio.Ajouter(typeOuvrage);
@@ -301,26 +267,16 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
             }
 
         }else if(e.getSource() == btnMAJ){
-
-            Bibliotheque.maj();
-            txtSortieMenu = sortieMenu.getText();
-            sortieMenu = new JTextArea();
-            sortieMenu.setSize(new Dimension(5,300));
-            sortieMenu.append(Bibliotheque.cadrerMot("suprime_Tableau",20)+Bibliotheque.cadrerMot("ajout_Tableau",20)
-                +Bibliotheque.cadrerMot("recherche_Tableau",20)+Bibliotheque.cadrerMot("suprime_Linked",20)+
-                Bibliotheque.cadrerMot("ajout_Linked",20)+Bibliotheque.cadrerMot("recherche_Linked",20) + "\n");
-            sortieMenu.append(txtSortieMenu);
-            String str = Bibliotheque.afficherStatistique();
-            sortieMenu.append(str);
-            panePrincipal.repaint();
-    
+            Bibliotheque.afficherStatistique();
+        }else if(e.getSource() == btnRechercher){
+            rechercherBilio();
         }    
         
     }
 
     public static void main(String[] args) throws Exception {
-        
         gBibliotheque = new GestionBibliotheque();
+
     }
     public Bibliotheque getBiblio() {
         return biblio;
@@ -337,6 +293,8 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
 
     @Override
     public void cliquer() {
+        btnMAJ.addActionListener(this::actionBouton);
+        btnRechercher.addActionListener(this::actionBouton);
         btnBiblioTab.addActionListener(this::actionBouton);
         btnBiblioLinked.addActionListener(this::actionBouton);
         btnBiblioPer.addActionListener(this::actionBouton);
@@ -346,7 +304,6 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         periodique.addActionListener(this::actionBouton);
         btnMenu.addActionListener(this::actionBouton);
         btnSuprimer.addActionListener(this::actionBouton);
-        btnMAJ.addActionListener(this::actionBouton);
         
         
     }

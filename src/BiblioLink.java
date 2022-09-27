@@ -67,14 +67,13 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
             while(ligne != null){
                 elt = ligne.split(";");
                 if(elt[0].equalsIgnoreCase("L") ){
-                    linkBiblio.add(new Livre(Integer.parseInt(elt[1]),elt[2],elt[3],elt[4],elt[5]));
+                    linkBiblio.add(new Livre(i+1,elt[1],elt[2],elt[3],elt[4]));
 
                 }else if(elt[0].equalsIgnoreCase("P") ){
-                    linkBiblio.add(new Periodique(Integer.parseInt(elt[1]),elt[2],elt[3],Integer.parseInt(elt[4]),
-                                                Integer.parseInt(elt[5])));
+                    linkBiblio.add(new Periodique(i+1,elt[1],elt[2],Integer.parseInt(elt[3]),Integer.parseInt(elt[4])));
                     
                 }else if(elt[0].equalsIgnoreCase("C") ){
-                    linkBiblio.add(new CDisque(Integer.parseInt(elt[1]),elt[2],elt[3],elt[4]));
+                    linkBiblio.add(new CDisque(i+1,elt[1],elt[2],elt[3]));
                     
                 }
                     ligne = tmpBiblio.readLine();
@@ -101,6 +100,20 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
         }
 
     }
+    public void chargerStatistiqueMap(int ind,long res) {
+
+        int size = getStatistiqueMap().size();
+        Long[] lst = new Long[9];
+        lst[ind]= res;
+        if(size ==0){
+            getStatistiqueMap().put(1,lst);
+
+        }else{
+
+            getStatistiqueMap().get(size)[ind]=res;
+
+        }
+    }
 
 /*============================================================================================================ */
 /*=========================================== Sauvegarde ===================================================== */
@@ -119,9 +132,10 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
 		} finally {// Exécuté si erreur ou pas
 			tmpWriteObj.close();
 		}
+        
         try {
 			tmpWriteObj = new ObjectOutputStream(new FileOutputStream(FICHIER_STATISTIQUE_OBJ));
-			tmpWriteObj.writeObject(super.getStatistiqueMap());
+			tmpWriteObj.writeObject(getStatistiqueMap());
 		} catch (FileNotFoundException e) {
 			System.out.println("Fichier introuvable. Vérifiez le chemin et nom du fichier.");
 		} catch (IOException e) {
@@ -157,7 +171,7 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
 
             }
         long stopTime = System.nanoTime();
-        rechercheTime.add(stopTime-startTime);
+        chargerStatistiqueMap(7, stopTime-startTime);
         return cond;
 
     }
@@ -165,8 +179,8 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
     @Override
     public void Ajouter(String typeListe) {
         long startTime = System.nanoTime();
-        int cote=0;
-        int cond =0;
+        int cote=getLinkBiblio().size()+1;
+    /*    int cond =0;
         String strCote = JOptionPane.showInputDialog(null, "Entrez le numero cote");
         if(strCote==null || strCote.equals(" ")){
             cote=0;
@@ -186,7 +200,7 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
                 cond=1;
             }  
         }
-
+*/
         if(cote != 0){   
             String date="";
             String  titre="", auteur="",editeur="";
@@ -250,7 +264,7 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
             
         }
         long stopTime = System.nanoTime();
-        ajoutTime = stopTime-startTime;
+        chargerStatistiqueMap(4, stopTime-startTime);
 
     }
     @Override
@@ -265,7 +279,7 @@ public LinkedList<Ouvrage> chargerObj() throws Exception {
             }
         }
         long stopTime =System.nanoTime();
-        suprimeTime = stopTime-startTime;
+        chargerStatistiqueMap(1, stopTime-startTime);
 
        // this.setlinkBiblio(tabTemp);
         //this.setTaille(taille-1);
