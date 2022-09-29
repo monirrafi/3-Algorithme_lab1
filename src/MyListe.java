@@ -1,50 +1,39 @@
-public class MyListe implements InterfaceListe {
-    Noued tete=null;
-    Noued queue=null;
-    int size=0;
+import java.io.Serializable;
 
-
+public class MyListe implements InterfaceListe,Serializable {
+    private Noued tete=null;
+    private Noued queue=null;
+    private int size=0;
+    private int index=0;
 
     public MyListe(Object obj) {
         this.tete = new Noued(obj);
         this.queue = tete;
+        size=0;
     }
 
     public MyListe() {
-        
-        
-        
     }
-       // Method to print the LinkedList.
-       public static void printList(MyListe list)
-       {
-           Noued currNode = list.tete;
-       
-           System.out.print("[");
-       
-           // Traverse through the LinkedList
-           while (currNode != null) {
-               // Print the data at current node
-               System.out.print(currNode.getData() + " ");
-       
-               // Go to next node
-               currNode = currNode.getNext();
-           }
-           System.out.println("]");
-
-        }
 
     @Override
     public void ajouter(Object obj) {
         
         Noued nouveauNoued = new Noued(obj);
-       // Noued suivant = this.queue;
         if(queue == null){
             this.tete = nouveauNoued;
             this.queue = nouveauNoued;
         }else{
-            this.queue.setNext(nouveauNoued);
-            this.queue = nouveauNoued;
+            Noued tmp = tete;
+            while(tmp != null){
+                if(tmp.getNext()==null){
+                    tmp.setNext(nouveauNoued);
+                    this.queue = nouveauNoued;
+                    break;
+                }else{
+                    tmp=tmp.getNext();
+                }
+
+            }
         }
 
     }
@@ -52,25 +41,30 @@ public class MyListe implements InterfaceListe {
     @Override
     public void suprimer(Object obj) {
         Noued nouedSuprimer = new Noued(obj);
-        
-        if(!recherche(obj).equals("Null")){
+        Noued tmp = tete;
+        Noued prev = null;
+        //if(!recherche(obj).equals("Null")){
             if(tete.getData() == nouedSuprimer.getData()){
                 tete=tete.getNext();
-            }else if(queue.getData() == nouedSuprimer.getData()){
-                queue=queue.getPrevious();
+                
+            
             }else{
-                
-                Noued suivant = nouedSuprimer.getNext();
-                Noued avant = nouedSuprimer.getPrevious();
-//                if(suivant != null && avant != null ){
-                    avant.setNext(suivant);
-//                }
-        
-                
+                while(tmp != null){
+                    if(tmp.getData() == nouedSuprimer.getData()){
+                        prev.setNext(tmp.getNext());                        
+                        break;
+                    }else if(tmp.getData() == nouedSuprimer.getData() && tmp.getNext()==null){
+                        queue=prev;
+                    }else{
+                        prev =tmp ;   
+                        tmp=tmp.getNext();
+                    }
+                    
+                }
             }
         }
         
-    }
+    
 
     @Override
     public Object recherche(Object obj) {
@@ -91,7 +85,7 @@ public class MyListe implements InterfaceListe {
               
 			return "Null";
         }else{
-            return tmp;
+            return tmp.getData();
         }
             
 
@@ -100,9 +94,19 @@ public class MyListe implements InterfaceListe {
     
 
     @Override
-    public void lister(Object obj) {
-        // TODO Auto-generated method stub
-        
+    public void lister() {
+        {
+            Noued currNode = tete;
+            System.out.print("[");
+ 
+            while (currNode != null) {
+                System.out.print(currNode.getData() + " ");
+                currNode = currNode.getNext();
+            }
+            System.out.println("]");
+ 
+         }
+         
     }
 
 
@@ -123,13 +127,55 @@ public class MyListe implements InterfaceListe {
         this.queue = queue;
     }
 
-    public int getSize() {
+    public int size() {
+        size=0;
+        Noued currNode = tete;
+        while (currNode != null) {
+            size++;
+            currNode = currNode.getNext();
+        }
         return size;
     }
 
-    public void setSize(int size) {
-        this.size = size;
+
+    public int getIndex(Object obj) {
+        index=0;
+        Noued currNode = new Noued(obj);
+        Noued tmp =tete;
+        while (tmp != null) {
+            if(tmp.getData()==currNode.getData() ){
+                break;
+            }else{
+                index++;
+                tmp = tmp.getNext();
+    
+            }
+        }
+
+        return index;
     }
+
+    @Override
+    public Object get(int index) {
+        int i=0;
+        boolean ret =false;
+        //Noued currNode = new Noued(obj);
+        Noued tmp =tete;
+        while (tmp != null) {
+            if(i==index ){
+                ret=true;
+                break;
+            }
+            i++;
+            tmp=tmp.getNext();
+        }
+        if(ret){
+            return tmp.getData();
+        }else{
+            return "Null";
+        }
+    }
+
 
     
 }

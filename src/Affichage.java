@@ -34,18 +34,29 @@ public class Affichage {
       }*/
    public static void main(String[] argv) throws Exception {
     MyListe liste = new MyListe();
-    liste.ajouter(14);
+    liste.ajouter(new Livre(15,"date","auteur","titre","editeur"));
     liste.ajouter(2);
     liste.ajouter(3);
     liste.ajouter(4);
- /*   liste.printList(liste);
+    liste.lister();/*
     liste.suprimer(14);
     liste.printList(liste);
-    liste.ajouter(4);
     liste.suprimer(4);
-    liste.printList(liste);*/
+    liste.printList(liste);
+    liste.ajouter(5);
+    liste.printList(liste);
+    liste.ajouter(1);
+    liste.printList(liste);
     liste.suprimer(3);
     liste.printList(liste);
+    liste.ajouter(6);
+    liste.printList(liste);
+    liste.suprimer(2);
+    liste.printList(liste);*/
+    System.out.println(liste.size());
+    System.out.println(liste.get(14));
+    System.out.println(liste.get(3));
+    System.out.println(liste.get(0));
   
     /*
         creaTable();

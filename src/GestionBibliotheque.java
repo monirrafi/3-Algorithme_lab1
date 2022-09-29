@@ -66,7 +66,11 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
             this.biblio = (BiblioTab) biblio;
         }else if(biblio instanceof BiblioLink){
             this.biblio = (BiblioLink) biblio;
+        }else if(biblio instanceof BiblioPerso){
+            this.biblio = (BiblioPerso) biblio;
+            
         }
+        
         changerSortie();
         sortie.setText(txtSortie);
         afficher();
@@ -250,7 +254,12 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
             }
 
         }else if(e.getSource() == btnBiblioPer){
-//            ajouterBiblio("periodique");
+            try {
+                biblio = new BiblioPerso();
+                gBibliotheque = new GestionBibliotheque(biblio);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }else if(e.getSource() == btnBiblioTab){
             try {
                 biblio = new BiblioTab();

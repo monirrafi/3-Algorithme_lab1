@@ -1,4 +1,6 @@
-public class Noued {
+import java.io.Serializable;
+
+public class Noued implements Serializable{
     private Object data;
     private Noued next;
     private Noued previous; 
