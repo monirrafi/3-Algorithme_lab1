@@ -89,7 +89,7 @@ public class GestionBibliotheque extends JFrame implements actionEcouteur{
         btnBiblioPer = new JButton("Biblio Personnel");
         btnMAJ = new JButton("Statistiques");
 
-        paneButton.add(btnMAJ);
+        //paneButton.add(btnMAJ);
         paneButton.add(btnBiblioTab);
         paneButton.add(btnBiblioLinked);
         paneButton.add(btnBiblioPer);

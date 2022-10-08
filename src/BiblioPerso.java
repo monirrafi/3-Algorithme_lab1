@@ -299,7 +299,7 @@ public MyListe chargerObj() throws Exception {
         String retour= "";
         retour= "  Le nombre total des ouvrages "+ persoBiblio.size() +" par Mon linkedListe\n";
         for(int i=0;i<persoBiblio.size();i++){
-            System.out.println(persoBiblio.get(i));
+           
             Ouvrage ouvrage = ((Ouvrage)persoBiblio.get(i));
             if(ouvrage instanceof Livre){
                 strLivre += ((Livre) ouvrage).toString();
