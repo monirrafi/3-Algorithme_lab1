@@ -1,14 +1,14 @@
-L;02/12/1923;Vector Hugo;Les misirables;chosepresse
-P;02/12/1923;Tournage;12354;5
-L;02/12/1923;Vector Hugo;Les misirables;chosepresse
-P;02/12/1923;Tournage;12354;5
-L;22/02/1963;Vector Hugo;Les misirables;chosepresse
+L;02/12/1923;Sarah Rivens;Captive;Hachette
+P;02/12/1923;L'annee du cinema 1982;1235;5
+L;02/12/1923;Elly Bangs;Unity;Albin Michel
+P;02/12/1923;Le livre d'or du football;2354;5
+L;22/02/1963;Céline Indit;Londres;Gallimard
+C;02/08/1993;One;U2
+L;02/12/1923;Allan Kardec;Le livre des esprits;Éditions de Mortagne
+P;02/12/1923;Telerama Horizons N 2 - les Dinosaures;154;5
+L;22/02/1963;Paul Roux et Denis M. Boucher;Le bateau fantôme de Petit-Rocher;Bouton d'or Acadie
 C;02/08/1993;Wall;Pink Floyd
-L;02/12/1923;Vector Hugo;Les misirables;chosepresse
-P;02/12/1923;Tournage;12354;5
-L;22/02/1963;Vector Hugo;Les misirables;chosepresse
-C;02/08/1993;Wall;Pink Floyd
-L;02/12/1923;Vector Hugo;Les misirables;chosepresse
-P;02/12/1923;Tournage;12354;5
-L;22/02/1963;Vector Hugo;Les misirables;chosepresse
-C;02/08/1993;Wall;Pink Floyd
+L;02/12/1923;Bertrand Guathier;Bertrand le magicien;Fonfon
+P;02/12/1923;Palmares du cyclisme;235;5
+L;22/02/1963;Pierre-Yves Villeneuve;Terminus;Bayard Canada
+C;02/08/1993;Is this Love;Bob Marley

@@ -22,8 +22,9 @@ public class BiblioTab extends Bibliotheque{
 /*=========================================== Constructeur ===================================================== */
 /*============================================================================================================ */
     
-    private Ouvrage[] tabBiblio = new Ouvrage[MAX];
     private int taille=0;
+    private Ouvrage[] tabBiblio = new Ouvrage[MAX];
+
     private static long suprimeTime =0;
     private static long ajoutTime =0;
     private static ArrayList<Long> listTime = new ArrayList<>();
@@ -68,7 +69,7 @@ public Ouvrage[] chargerObj() throws Exception {
             String ligne = tmpBiblio.readLine();
             String[] elt = new String[6];
             int i=0;
-            while(i<MAX && ligne != null){
+            while( ligne != null && i<MAX){
                 elt = ligne.split(";");
                 if(elt[0].equalsIgnoreCase("L") ){
                     tabBiblio[i]= new Livre(i+1,elt[1],elt[2],elt[3],elt[4]);
@@ -80,7 +81,7 @@ public Ouvrage[] chargerObj() throws Exception {
                     tabBiblio[i]= new CDisque(i+1,elt[1],elt[2],elt[3]);
                     
                 }
-                    ligne = tmpBiblio.readLine();
+                ligne = tmpBiblio.readLine();
                 i++;
                 r=i;
             }
@@ -90,6 +91,12 @@ public Ouvrage[] chargerObj() throws Exception {
     }
     
     taille = r;
+    setTaille(taille);
+    Ouvrage[] tmpTab = new Ouvrage[taille];
+    for(int i=0;i<taille;i++){
+        tmpTab[i]=tabBiblio[i];
+    }
+    setTabBiblio(tmpTab);
     return tabBiblio;
 
     }
@@ -122,7 +129,7 @@ public Ouvrage[] chargerObj() throws Exception {
 		} finally {// Exécuté si erreur ou pas
 			tmpWriteObj.close();
 		}
-
+/*
  		try {
 
 			tmpWriteObj = new ObjectOutputStream(new FileOutputStream(FICHIER_STATISTIQUE_OBJ));
@@ -135,7 +142,7 @@ public Ouvrage[] chargerObj() throws Exception {
 			System.out.println("Un probléme est arrivé lors du chargement du fichier charge Bibliotheque. Contactez l'administrateur.");
 		} finally {// Exécuté si erreur ou pas
 			tmpWriteObj.close();
-		}
+		}*/
 	}
    
 /*============================================================================================================ */
@@ -295,9 +302,9 @@ public Ouvrage[] chargerObj() throws Exception {
                 strCD += ((CDisque) ouvrage).toString();
             }
         }
-        retour+= "\n  Les Livres\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Auteur",15)+ Ouvrage.envollopeMot("\ttitre",15) + Ouvrage.envollopeMot("\tEditeur",15)+"\n"+ strLivre;
-        retour+= "\n  Les periodiques\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Nom",15)+"\tNumero\tPeriodicite\n"+ strPeriodique;
-        retour+= "\n  Les CD\n  Cote\tDate\t"+ Ouvrage.envollopeMot("Titre",15)+ Ouvrage.envollopeMot("\tAuteur",15)+"\n"+ strCD;
+        retour+= "\n  Les Livres\n\n  Cote\tDate\t\t"+ Ouvrage.envollopeMot("Auteur",15)+ Ouvrage.envollopeMot("\ttitre",15) + Ouvrage.envollopeMot("\tEditeur",15)+"\n"+ strLivre;
+        retour+= "\n  Les periodiques\n\n  Cote\tDate\t\t"+ Ouvrage.envollopeMot("Nom",15)+"\tNumero\tPeriodicite\n"+ strPeriodique;
+        retour+= "\n  Les CD\n\n  Cote\tDate\t\t"+ Ouvrage.envollopeMot("Titre",15)+ Ouvrage.envollopeMot("\tAuteur",15)+"\n"+ strCD;
         //long stopTime =System.nanoTime();
         //super.setExucuteTime(stopTime-startTime);
 
